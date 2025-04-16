@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Pencil, Trash2, Calendar } from "lucide-react";
 
-export default function EventPage() {
+export default function ProgramPage() {
     const [selectedMonth, setSelectedMonth] = useState("Maret");
 
     const data = [
@@ -34,7 +34,7 @@ export default function EventPage() {
             <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Calendar className="w-5 h-5" />
-                    Event
+                    Program
                 </div>
             </div>
 

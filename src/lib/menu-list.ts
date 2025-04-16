@@ -6,7 +6,8 @@ import {
   SquarePen,
   Calendar,
   LayoutGrid,
-  LucideIcon
+  LucideIcon,
+  BookIcon
 } from "lucide-react";
 
 type Submenu = {
@@ -45,9 +46,20 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "",
       menus: [
         {
-          href: "/event",
-          label: "Event",
+          href: "/program",
+          label: "Program",
           icon: Calendar,
+          submenus: []
+        }
+      ]
+    },
+    {
+      groupLabel: "",
+      menus: [
+        {
+          href: "/manajemen-sertifikasi",
+          label: "Manajemen Sertifikasi",
+          icon: BookIcon,
           submenus: []
         }
       ]
