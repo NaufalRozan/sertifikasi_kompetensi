@@ -101,10 +101,10 @@ export default function AsetMasukPage() {
                         </select>
                     </div>
                     <button
-                        onClick={() => router.push("/manajemen-sertifikasi/add")}
+                        onClick={() => router.push("/aset/masuk/add")}
                         className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium shadow transition duration-200"
                     >
-                        + Tambah Sertifikasi
+                        + Tambah Aset
                     </button>
                 </div>
 

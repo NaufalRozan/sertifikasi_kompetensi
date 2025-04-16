@@ -3,46 +3,36 @@
 import { useState } from "react";
 import { PlusCircle } from "lucide-react";
 
-export default function AddSertifikasiPage() {
-    const [kode, setKode] = useState("");
+export default function AddAsetMasukPage() {
     const [nama, setNama] = useState("");
-    const [tersertifikasi, setTersertifikasi] = useState(0);
-    const [terdaftar, setTerdaftar] = useState(0);
+    const [tanggal, setTanggal] = useState("");
+    const [vendor, setVendor] = useState("");
+    const [stok, setStok] = useState(0);
+    const [satuan, setSatuan] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const data = { kode, nama, tersertifikasi, terdaftar };
-        console.log("Data Sertifikasi Baru:", data);
-        alert("Data sertifikasi berhasil ditambahkan!");
-        // TODO: Kirim ke API / backend
+        const data = { nama, tanggal, vendor, stok, satuan };
+        console.log("Aset Masuk Ditambahkan:", data);
+        alert("Aset masuk berhasil ditambahkan!");
+        // TODO: Kirim ke API/backend
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <PlusCircle className="w-5 h-5" />
-                    Tambah Sertifikasi
+                    Tambah Aset Masuk
                 </div>
             </div>
 
-            {/* Form Tambah */}
+            {/* Form */}
             <div className="w-full max-w-xl bg-white -mt-24 z-10 relative p-6 rounded-2xl shadow-lg">
                 <form onSubmit={handleSubmit} className="space-y-4 text-sm">
                     <div>
-                        <label className="font-medium block mb-1">Kode Sertifikasi</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={kode}
-                            onChange={(e) => setKode(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label className="font-medium block mb-1">Nama Sertifikasi</label>
+                        <label className="font-medium block mb-1">Nama Aset</label>
                         <input
                             type="text"
                             className="w-full border border-gray-300 rounded px-3 py-2"
@@ -53,22 +43,46 @@ export default function AddSertifikasiPage() {
                     </div>
 
                     <div>
-                        <label className="font-medium block mb-1">Jumlah Peserta Tersertifikasi</label>
+                        <label className="font-medium block mb-1">Tanggal Masuk</label>
                         <input
-                            type="number"
+                            type="date"
                             className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={tersertifikasi}
-                            onChange={(e) => setTersertifikasi(parseInt(e.target.value))}
+                            value={tanggal}
+                            onChange={(e) => setTanggal(e.target.value)}
+                            required
                         />
                     </div>
 
                     <div>
-                        <label className="font-medium block mb-1">Jumlah Peserta Terdaftar</label>
+                        <label className="font-medium block mb-1">Vendor</label>
+                        <input
+                            type="text"
+                            className="w-full border border-gray-300 rounded px-3 py-2"
+                            value={vendor}
+                            onChange={(e) => setVendor(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="font-medium block mb-1">Stok</label>
                         <input
                             type="number"
                             className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={terdaftar}
-                            onChange={(e) => setTerdaftar(parseInt(e.target.value))}
+                            value={stok}
+                            onChange={(e) => setStok(parseInt(e.target.value))}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="font-medium block mb-1">Satuan</label>
+                        <input
+                            type="text"
+                            className="w-full border border-gray-300 rounded px-3 py-2"
+                            value={satuan}
+                            onChange={(e) => setSatuan(e.target.value)}
+                            required
                         />
                     </div>
 

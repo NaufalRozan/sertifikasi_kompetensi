@@ -101,10 +101,10 @@ export default function AsetKeluarPage() {
                         </select>
                     </div>
                     <button
-                        onClick={() => router.push("/manajemen-sertifikasi/add")}
+                        onClick={() => router.push("/aset/keluar/add")}
                         className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium shadow transition duration-200"
                     >
-                        + Tambah Sertifikasi
+                        + Tambah Aset
                     </button>
                 </div>
 
@@ -115,7 +115,7 @@ export default function AsetKeluarPage() {
                             <tr>
                                 <th className="p-4">No</th>
                                 <th className="p-4">Nama Aset</th>
-                                <th className="p-4">Tanggal Masuk</th>
+                                <th className="p-4">Tanggal Keluar</th>
                                 <th className="p-4">Distributor</th>
                                 <th className="p-4">Stok</th>
                                 <th className="p-4">Satuan</th>
