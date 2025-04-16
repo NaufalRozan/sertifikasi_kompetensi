@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Ellipsis, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,17 @@ interface MenuProps {
 export function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
+  const [isAsetExpanded, setIsAsetExpanded] = useState(false);
+
+  const isAsetPath = pathname.startsWith("/aset");
+
+  useEffect(() => {
+    if (!pathname.startsWith("/aset")) {
+      setIsAsetExpanded(false);
+    } else {
+      setIsAsetExpanded(true);
+    }
+  }, [pathname]);
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -61,7 +74,7 @@ export function Menu({ isOpen }: MenuProps) {
                               variant={
                                 (active === undefined &&
                                   pathname.startsWith(href)) ||
-                                active
+                                  active
                                   ? "activeSidebar"
                                   : "ghost"
                               }
@@ -100,13 +113,12 @@ export function Menu({ isOpen }: MenuProps) {
                       <CollapseMenuButton
                         icon={Icon}
                         label={label}
-                        active={
-                          active === undefined
-                            ? pathname.startsWith(href)
-                            : active
-                        }
+                        active={pathname.startsWith("/aset")}
                         submenus={submenus}
                         isOpen={isOpen}
+                        href={href}
+                        expanded={isAsetExpanded}
+                        setExpanded={setIsAsetExpanded}
                       />
                     </div>
                   )
@@ -118,7 +130,7 @@ export function Menu({ isOpen }: MenuProps) {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => {}}
+                    onClick={() => { }}
                     variant="outline"
                     className="w-full justify-center h-10 mt-5"
                   >

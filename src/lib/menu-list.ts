@@ -7,7 +7,9 @@ import {
   Calendar,
   LayoutGrid,
   LucideIcon,
-  BookIcon
+  BookIcon,
+  User2,
+  Box
 } from "lucide-react";
 
 type Submenu = {
@@ -64,5 +66,37 @@ export function getMenuList(pathname: string): Group[] {
         }
       ]
     },
+    {
+      groupLabel: "",
+      menus: [
+        {
+          href: "/manajemen-peserta",
+          label: "Manajemen Peserta",
+          icon: User2,
+          submenus: []
+        }
+      ]
+    },
+    {
+      groupLabel: "",
+      menus: [
+        {
+          label: "Manajemen Aset",
+          icon: Box,
+          href: "/aset",
+          submenus: [
+            {
+              label: "Aset Masuk",
+              href: "/aset/masuk",
+            },
+            {
+              label: "Aset Keluar",
+              href: "/aset/keluar",
+            },
+          ],
+        },
+      ],
+    }
+
   ];
 }
