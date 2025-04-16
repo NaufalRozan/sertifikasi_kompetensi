@@ -59,9 +59,8 @@ export const CollapseMenuButton = ({
       {/* Submenu */}
       {expanded && (
         <div className="pl-8 mt-1 space-y-1">
-          {submenus.map((submenu, idx) => {
+          {isOpen && submenus.map((submenu, idx) => {
             const isActive = pathname === submenu.href;
-
             return (
               <Link
                 key={idx}
@@ -69,7 +68,7 @@ export const CollapseMenuButton = ({
                 className={cn(
                   "block text-sm px-3 py-1 rounded transition",
                   isActive
-                    ? "text-red-700 "
+                    ? "text-red-700"
                     : "text-gray-700 hover:bg-gray-100"
                 )}
               >

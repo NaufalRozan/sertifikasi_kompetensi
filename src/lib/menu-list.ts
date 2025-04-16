@@ -9,7 +9,8 @@ import {
   LucideIcon,
   BookIcon,
   User2,
-  Box
+  Box,
+  DollarSign
 } from "lucide-react";
 
 type Submenu = {
@@ -96,7 +97,30 @@ export function getMenuList(pathname: string): Group[] {
           ],
         },
       ],
+    },
+    {
+      groupLabel: "",
+      menus: [
+        {
+          label: "Manajemen Keuangan",
+          icon: DollarSign,
+          href: "/keuangan",
+          submenus: [
+            {
+              label: "Transaksi Masuk",
+              href: "/keuangan/masuk",
+            },
+            {
+              label: "Transaksi Keluar",
+              href: "/keuangan/keluar",
+            },
+            {
+              label: "Admin Menu",
+              href: "/keuangan/admin",
+            },
+          ],
+        },
+      ],
     }
-
   ];
 }

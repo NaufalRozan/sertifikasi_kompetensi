@@ -26,14 +26,23 @@ export function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
   const [isAsetExpanded, setIsAsetExpanded] = useState(false);
-
   const isAsetPath = pathname.startsWith("/aset");
+  const [isKeuanganExpanded, setIsKeuanganExpanded] = useState(false);
+  const isKeuanganPath = pathname.startsWith("/keuangan");
 
   useEffect(() => {
     if (!pathname.startsWith("/aset")) {
       setIsAsetExpanded(false);
     } else {
       setIsAsetExpanded(true);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (isKeuanganPath) {
+      setIsKeuanganExpanded(true);
+    } else {
+      setIsKeuanganExpanded(false);
     }
   }, [pathname]);
 
@@ -113,12 +122,24 @@ export function Menu({ isOpen }: MenuProps) {
                       <CollapseMenuButton
                         icon={Icon}
                         label={label}
-                        active={pathname.startsWith("/aset")}
+                        active={pathname.startsWith(href)}
                         submenus={submenus}
                         isOpen={isOpen}
                         href={href}
-                        expanded={isAsetExpanded}
-                        setExpanded={setIsAsetExpanded}
+                        expanded={
+                          label === "Manajemen Aset"
+                            ? isAsetExpanded
+                            : label === "Manajemen Keuangan"
+                              ? isKeuanganExpanded
+                              : false
+                        }
+                        setExpanded={
+                          label === "Manajemen Aset"
+                            ? setIsAsetExpanded
+                            : label === "Manajemen Keuangan"
+                              ? setIsKeuanganExpanded
+                              : () => { }
+                        }
                       />
                     </div>
                   )
