@@ -2,17 +2,29 @@
 
 import { useState } from "react";
 import { Pencil, Trash2, Calendar } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function ProgramPage() {
+    const router = useRouter();
     const [selectedMonth, setSelectedMonth] = useState("Maret");
 
     const data = [
-        { no: 1, tanggal: "20 April 2025", notulen: "Rapat persiapan kompetensi...", peserta: 12, status: "Selesai" },
-        { no: 2, tanggal: "28 Juni 2025", notulen: "Evaluasi Proyek Mesin", peserta: 8, status: "Proses" },
-        { no: 3, tanggal: "12 Juli 2025", notulen: "Pengadaan Alat Bengkel", peserta: 15, status: "Selesai" },
-        { no: 4, tanggal: "19 April 2025", notulen: "Rapat Kolaborasi dengan Industri Otomotif", peserta: 10, status: "Selesai" },
-        { no: 5, tanggal: "03 Mei 2025", notulen: "Workshop 3D Printing", peserta: 20, status: "Dijadwalkan" },
-        { no: 6, tanggal: "20 Mei 2025", notulen: "Rapat Evaluasi Magang", peserta: 25, status: "Selesai" },
+        { id: 1, tanggal: "20 April 2025", notulen: "Rapat persiapan kompetensi...", peserta: 12, status: "Selesai" },
+        { id: 2, tanggal: "28 Juni 2025", notulen: "Evaluasi Proyek Mesin", peserta: 8, status: "Proses" },
+        { id: 3, tanggal: "12 Juli 2025", notulen: "Pengadaan Alat Bengkel", peserta: 15, status: "Selesai" },
+        { id: 4, tanggal: "19 April 2025", notulen: "Rapat Kolaborasi dengan Industri Otomotif", peserta: 10, status: "Selesai" },
+        { id: 5, tanggal: "03 Mei 2025", notulen: "Workshop 3D Printing", peserta: 20, status: "Dijadwalkan" },
+        { id: 6, tanggal: "20 Mei 2025", notulen: "Rapat Evaluasi Magang", peserta: 25, status: "Selesai" },
     ];
 
     const getStatusStyle = (status: string) => {
@@ -30,7 +42,7 @@ export default function ProgramPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Calendar className="w-5 h-5" />
@@ -38,74 +50,81 @@ export default function ProgramPage() {
                 </div>
             </div>
 
-            {/* Konten Utama */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative">
-                {/* Filter Bulan di kiri */}
-                <div className="flex justify-start mb-4">
-                    <div className="text-sm flex items-center gap-2">
-                        <label htmlFor="bulan" className="font-medium text-white">Bulan :</label>
-                        <select
-                            id="bulan"
-                            className="text-black border border-gray-300 rounded px-3 py-1 text-sm"
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                        >
-                            <option>Maret</option>
-                            <option>April</option>
-                            <option>Mei</option>
-                            <option>Juni</option>
-                            <option>Juli</option>
-                        </select>
+            {/* Konten */}
+            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
+                {/* Filter dan Tambah */}
+                <div className="flex justify-between items-center mb-6">
+                    {/* Filter bulan */}
+                    <div className="flex items-center gap-2 text-sm text-white">
+                        <Label htmlFor="bulan" className="text-white">Bulan :</Label>
+                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                            <SelectTrigger className="w-[140px] bg-white text-black">
+                                <SelectValue placeholder="Pilih bulan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {["Maret", "April", "Mei", "Juni", "Juli"].map((bulan, i) => (
+                                    <SelectItem key={i} value={bulan}>
+                                        {bulan}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
+
+                    {/* Tombol tambah */}
+                    <Button
+                        onClick={() => router.push("/program/add")}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                        + Tambah Program
+                    </Button>
                 </div>
 
-                {/* Tabel */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-red-700 font-semibold border-b">
-                            <tr>
-                                <th className="p-4">No</th>
-                                <th className="p-4">Tanggal Rapat</th>
-                                <th className="p-4">Notulen</th>
-                                <th className="p-4">Peserta</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((item) => (
-                                <tr key={item.no} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{item.no}</td>
-                                    <td className="p-4">{item.tanggal}</td>
-                                    <td className="p-4 truncate max-w-xs">{item.notulen}</td>
-                                    <td className="p-4">{item.peserta}</td>
-                                    <td className="p-4">
-                                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusStyle(item.status)}`}>
-                                            {item.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 space-x-2 flex items-center">
-                                        <button className="p-1 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
-                                            <Pencil size={16} />
-                                        </button>
-                                        <button className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-
-                    {/* Pagination */}
-                    <div className="flex justify-center items-center gap-2 py-4">
-                        <button className="text-gray-500 hover:text-red-700">&lt;</button>
-                        <button className="w-7 h-7 rounded-full bg-red-700 text-white text-xs font-medium">01</button>
-                        <button className="text-sm hover:underline">02</button>
-                        <button className="text-sm hover:underline">03</button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <button className="text-gray-500 hover:text-red-700">&gt;</button>
-                    </div>
+                {/* Card Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {data.map((item) => (
+                        <Card
+                            key={item.id}
+                            onClick={() => router.push(`/program/${item.id}/subprogram`)}
+                            className="cursor-pointer hover:shadow-md transition"
+                        >
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-red-700 text-lg">{item.tanggal}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <div className="text-xs text-gray-500">#{item.id}</div>
+                                <div className="text-sm text-gray-700">{item.notulen}</div>
+                                <div className="text-sm text-gray-500">Peserta: {item.peserta}</div>
+                                <div className="mt-1">
+                                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusStyle(item.status)}`}>
+                                        {item.status}
+                                    </span>
+                                </div>
+                                <div className="flex gap-2 justify-end pt-3">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Edit logic here
+                                        }}
+                                    >
+                                        <Pencil size={16} />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Delete logic here
+                                        }}
+                                    >
+                                        <Trash2 size={16} />
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             </div>
         </div>
