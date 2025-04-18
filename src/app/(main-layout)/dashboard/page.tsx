@@ -59,6 +59,21 @@ export default function DashboardPage() {
             title="Jumlah Transaksi"
             value="Rp 225.000.000"
           />
+          <InfoCard
+            icon={<UsersIcon className="w-8 h-8 text-green-700" />}
+            title="Peserta Lulus"
+            value="15"
+          />
+          <InfoCard
+            icon={<UsersIcon className="w-8 h-8 text-red-600" />}
+            title="Peserta Tidak Lulus"
+            value="5"
+          />
+          <InfoCard
+            icon={<UsersIcon className="w-8 h-8 text-gray-500" />}
+            title="Belum Mengikuti"
+            value="5"
+          />
         </div>
 
         {/* Chart & Total Saldo */}
@@ -125,7 +140,6 @@ export default function DashboardPage() {
                 • Jadwal Rapat
               </div>
             </CardContent>
-
           </Card>
 
           {/* Chart Income & Expense */}
