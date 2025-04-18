@@ -29,6 +29,9 @@ export function Menu({ isOpen }: MenuProps) {
   const isAsetPath = pathname.startsWith("/aset");
   const [isKeuanganExpanded, setIsKeuanganExpanded] = useState(false);
   const isKeuanganPath = pathname.startsWith("/keuangan");
+  const [isHrdExpanded, setIsHrdExpanded] = useState(false);
+  const isHrdPath = pathname.startsWith("/hrd");
+
 
   useEffect(() => {
     if (!pathname.startsWith("/aset")) {
@@ -43,6 +46,14 @@ export function Menu({ isOpen }: MenuProps) {
       setIsKeuanganExpanded(true);
     } else {
       setIsKeuanganExpanded(false);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (isHrdPath) {
+      setIsHrdExpanded(true);
+    } else {
+      setIsHrdExpanded(false);
     }
   }, [pathname]);
 
@@ -131,14 +142,18 @@ export function Menu({ isOpen }: MenuProps) {
                             ? isAsetExpanded
                             : label === "Manajemen Keuangan"
                               ? isKeuanganExpanded
-                              : false
+                              : label === "Manajemen HRD"
+                                ? isHrdExpanded
+                                : false
                         }
                         setExpanded={
                           label === "Manajemen Aset"
                             ? setIsAsetExpanded
                             : label === "Manajemen Keuangan"
                               ? setIsKeuanganExpanded
-                              : () => { }
+                              : label === "Manajemen HRD"
+                                ? setIsHrdExpanded
+                                : () => { }
                         }
                       />
                     </div>

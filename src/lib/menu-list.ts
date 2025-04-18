@@ -71,12 +71,33 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "",
       menus: [
         {
-          href: "/manajemen-peserta",
-          label: "Manajemen Peserta",
-          icon: User2,
-          submenus: []
-        }
-      ]
+          label: "Manajemen HRD",
+          icon: Users,
+          href: "/hrd",
+          submenus: [
+            {
+              label: "Manajemen Peserta",
+              href: "/hrd/manajemen-peserta",
+            },
+            {
+              label: "Manajemen Trainer",
+              href: "/hrd/manajemen-trainer",
+            },
+            {
+              label: "Manajemen Pengurus",
+              href: "/hrd/manajemen-pengurus",
+            },
+            {
+              label: "Manajemen Struktur",
+              href: "/hrd/manajemen-struktur",
+            },
+            {
+              label: "Manajemen Asessor",
+              href: "/hrd/manajemen-asessor",
+            },
+          ],
+        },
+      ],
     },
     {
       groupLabel: "",
