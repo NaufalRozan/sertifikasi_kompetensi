@@ -26,6 +26,7 @@ export default function ManajemenPesertaPage() {
       status: "Lulus",
       pdf: true,
       notifikasi: "Terkirim",
+      saldo: 250000,
     },
     {
       nim: "20220140011",
@@ -36,6 +37,7 @@ export default function ManajemenPesertaPage() {
       status: "-",
       pdf: false,
       notifikasi: "Belum",
+      saldo: 150000,
     },
     {
       nim: "20220140122",
@@ -46,6 +48,7 @@ export default function ManajemenPesertaPage() {
       status: "Selesai",
       pdf: true,
       notifikasi: "Terkirim",
+      saldo: 350000,
     },
     {
       nim: "20220140133",
@@ -56,6 +59,7 @@ export default function ManajemenPesertaPage() {
       status: "Selesai",
       pdf: true,
       notifikasi: "Terkirim",
+      saldo: 275000,
     },
     {
       nim: "20220140144",
@@ -66,6 +70,7 @@ export default function ManajemenPesertaPage() {
       status: "Selesai",
       pdf: true,
       notifikasi: "Terkirim",
+      saldo: 0,
     },
     {
       nim: "20220140155",
@@ -76,6 +81,7 @@ export default function ManajemenPesertaPage() {
       status: "-",
       pdf: false,
       notifikasi: "Belum",
+      saldo: 100000,
     },
   ];
 
@@ -101,12 +107,25 @@ export default function ManajemenPesertaPage() {
     }
   };
 
+  const formatRupiah = (amount: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+
   const filteredData =
     selectedSertifikasi === "Semua"
       ? data
       : data.filter((item) => item.sertifikasi === selectedSertifikasi);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const searchedData = filteredData.filter(
+    (item) =>
+      item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -120,10 +139,9 @@ export default function ManajemenPesertaPage() {
 
       {/* Konten */}
       <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-
         {/* Filter dan Tambah */}
         <div className="flex flex-col gap-4 mb-4">
-          {/* Baris Atas: Filter & Button */}
+          {/* Baris Atas: Filter & Jumlah */}
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm text-white">
               <Label htmlFor="sertifikasi" className="text-white">
@@ -147,7 +165,7 @@ export default function ManajemenPesertaPage() {
             </div>
 
             <div className="text-sm font-semibold text-white">
-              Jumlah Peserta: <span className="font-bold">{filteredData.length}</span>
+              Jumlah Peserta: <span className="font-bold">{searchedData.length}</span>
             </div>
           </div>
 
@@ -171,24 +189,25 @@ export default function ManajemenPesertaPage() {
                 <th className="p-4">Email</th>
                 <th className="p-4">Whatsapp</th>
                 <th className="p-4">Sertifikasi Terdaftar</th>
+                <th className="p-4">Saldo</th>
+
                 <th className="p-4">Status</th>
                 <th className="p-4">PDF Sertifikat</th>
                 <th className="p-4">Notifikasi</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item, idx) => (
+              {searchedData.map((item, idx) => (
                 <tr key={idx} className="border-b hover:bg-gray-50">
                   <td className="p-4">{item.nim}</td>
                   <td className="p-4">{item.nama}</td>
                   <td className="p-4">{item.email}</td>
                   <td className="p-4">{item.whatsapp}</td>
                   <td className="p-4">{item.sertifikasi}</td>
+                  <td className="p-4">{formatRupiah(item.saldo)}</td>
                   <td className="p-4">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                        item.status
-                      )}`}
+                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
                     >
                       {item.status}
                     </span>
@@ -204,9 +223,7 @@ export default function ManajemenPesertaPage() {
                   </td>
                   <td className="p-4">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                        item.notifikasi
-                      )}`}
+                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
                     >
                       {item.notifikasi}
                     </span>
