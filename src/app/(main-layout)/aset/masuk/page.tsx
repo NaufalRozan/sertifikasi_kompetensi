@@ -18,6 +18,7 @@ export default function AsetMasukPage() {
     const router = useRouter();
     const [selectedMonth, setSelectedMonth] = useState("Juni");
 
+    // bagian data
     const data = [
         {
             no: 1,
@@ -26,6 +27,10 @@ export default function AsetMasukPage() {
             vendor: "PT. Mesin Jaya",
             stok: 2,
             satuan: "Unit",
+            expired: "20 April 2030",
+            lokasi: "Gudang A",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 25.000.000",
         },
         {
             no: 2,
@@ -34,6 +39,10 @@ export default function AsetMasukPage() {
             vendor: "PT. Fluida Mesin",
             stok: 30,
             satuan: "Liter",
+            expired: "09 April 2026",
+            lokasi: "Rak B3",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 150.000",
         },
         {
             no: 3,
@@ -42,6 +51,10 @@ export default function AsetMasukPage() {
             vendor: "CV. Baja Kuat",
             stok: 200,
             satuan: "Pcs",
+            expired: "-",
+            lokasi: "Rak C2",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 500",
         },
         {
             no: 4,
@@ -50,6 +63,10 @@ export default function AsetMasukPage() {
             vendor: "CV. Udara Power",
             stok: 30,
             satuan: "Liter",
+            expired: "09 Mei 2028",
+            lokasi: "Gudang B",
+            kondisi: "Rusak",
+            harga: "Rp 8.000.000",
         },
         {
             no: 5,
@@ -58,6 +75,10 @@ export default function AsetMasukPage() {
             vendor: "UD. Perkakas",
             stok: 5,
             satuan: "Unit",
+            expired: "-",
+            lokasi: "Workshop",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 3.500.000",
         },
         {
             no: 6,
@@ -66,6 +87,10 @@ export default function AsetMasukPage() {
             vendor: "PT. Bearing Indo",
             stok: 30,
             satuan: "Pcs",
+            expired: "23 Juli 2027",
+            lokasi: "Rak D1",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 80.000",
         },
         {
             no: 7,
@@ -74,8 +99,13 @@ export default function AsetMasukPage() {
             vendor: "PT. Pelumas Indo",
             stok: 10,
             satuan: "Liter",
+            expired: "-",
+            lokasi: "Gudang C",
+            kondisi: "Rusak",
+            harga: "Rp 1.000.000",
         },
     ];
+
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -143,7 +173,11 @@ export default function AsetMasukPage() {
                                 <th className="p-4">No</th>
                                 <th className="p-4">Nama Aset</th>
                                 <th className="p-4">Tanggal Masuk</th>
+                                <th className="p-4">Tanggal Expired</th>
                                 <th className="p-4">Vendor</th>
+                                <th className="p-4">Lokasi</th>
+                                <th className="p-4">Kondisi</th>
+                                <th className="p-4">Harga</th>
                                 <th className="p-4">Stok</th>
                                 <th className="p-4">Satuan</th>
                                 <th className="p-4">Aksi</th>
@@ -155,7 +189,11 @@ export default function AsetMasukPage() {
                                     <td className="p-4">{item.no}</td>
                                     <td className="p-4">{item.nama}</td>
                                     <td className="p-4">{item.tanggal}</td>
+                                    <td className="p-4">{item.expired}</td>
                                     <td className="p-4">{item.vendor}</td>
+                                    <td className="p-4">{item.lokasi}</td>
+                                    <td className="p-4">{item.kondisi}</td>
+                                    <td className="p-4">{item.harga}</td>
                                     <td className="p-4">{item.stok}</td>
                                     <td className="p-4">{item.satuan}</td>
                                     <td className="p-4 flex items-center gap-2">

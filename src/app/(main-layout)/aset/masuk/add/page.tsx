@@ -10,13 +10,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function AddAsetMasukPage() {
     const [nama, setNama] = useState("");
     const [tanggal, setTanggal] = useState("");
+    const [expired, setExpired] = useState("");
     const [vendor, setVendor] = useState("");
+    const [lokasi, setLokasi] = useState("");
+    const [kondisi, setKondisi] = useState("Tidak Rusak");
+    const [harga, setHarga] = useState("");
     const [stok, setStok] = useState(0);
     const [satuan, setSatuan] = useState("");
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const data = { nama, tanggal, vendor, stok, satuan };
+        const data = {
+            nama,
+            tanggal,
+            expired,
+            vendor,
+            lokasi,
+            kondisi,
+            harga,
+            stok,
+            satuan,
+        };
         console.log("Aset Masuk Ditambahkan:", data);
         alert("Aset masuk berhasil ditambahkan!");
         // TODO: Kirim ke API/backend
@@ -64,11 +78,59 @@ export default function AddAsetMasukPage() {
                             </div>
 
                             <div className="space-y-1">
+                                <Label>Tanggal Expired</Label>
+                                <Input
+                                    type="date"
+                                    value={expired}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setExpired(e.target.value)
+                                    }
+                                />
+                            </div>
+
+                            <div className="space-y-1">
                                 <Label>Vendor</Label>
                                 <Input
                                     value={vendor}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                         setVendor(e.target.value)
+                                    }
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Lokasi</Label>
+                                <Input
+                                    value={lokasi}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setLokasi(e.target.value)
+                                    }
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Kondisi</Label>
+                                <select
+                                    value={kondisi}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setKondisi(e.target.value)
+                                    }
+                                    className="w-full border rounded-md px-3 py-2 bg-white text-sm"
+                                >
+                                    <option value="Tidak Rusak">Tidak Rusak</option>
+                                    <option value="Rusak">Rusak</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Harga</Label>
+                                <Input
+                                    type="text"
+                                    value={harga}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setHarga(e.target.value)
                                     }
                                     required
                                 />
