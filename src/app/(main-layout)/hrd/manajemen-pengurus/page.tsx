@@ -27,6 +27,8 @@ export default function ManajemenPengurusPage() {
             sertifikasi: "K3 Umum",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "12.111.222.3-444.000",
+            rekening: "1122334455",
         },
         {
             nip: "PG002",
@@ -38,6 +40,8 @@ export default function ManajemenPengurusPage() {
             sertifikasi: "K3 Mekanik",
             status: "Nonaktif",
             notifikasi: "Belum",
+            npwp: "44.555.666.7-888.000",
+            rekening: "2233445566",
         },
         {
             nip: "PG003",
@@ -49,6 +53,8 @@ export default function ManajemenPengurusPage() {
             sertifikasi: "K3 Engineering",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "77.888.999.0-111.000",
+            rekening: "3344556677",
         },
     ];
 
@@ -89,7 +95,7 @@ export default function ManajemenPengurusPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <UserCog className="w-5 h-5" />
@@ -101,7 +107,6 @@ export default function ManajemenPengurusPage() {
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
                 {/* Filter dan Jumlah */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Count */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
                             <Label htmlFor="sertifikasi" className="text-white">
@@ -123,13 +128,11 @@ export default function ManajemenPengurusPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="text-sm font-semibold text-white">
                             Jumlah Pengurus: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari pengurus..."
@@ -151,6 +154,8 @@ export default function ManajemenPengurusPage() {
                                 <th className="p-4">Jabatan</th>
                                 <th className="p-4">Unit</th>
                                 <th className="p-4">Sertifikasi</th>
+                                <th className="p-4">NPWP</th>
+                                <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
                             </tr>
@@ -165,21 +170,15 @@ export default function ManajemenPengurusPage() {
                                     <td className="p-4">{item.jabatan}</td>
                                     <td className="p-4">{item.unit}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
+                                    <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                                                item.status
-                                            )}`}
-                                        >
+                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>
                                             {item.status}
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                                                item.notifikasi
-                                            )}`}
-                                        >
+                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}>
                                             {item.notifikasi}
                                         </span>
                                     </td>

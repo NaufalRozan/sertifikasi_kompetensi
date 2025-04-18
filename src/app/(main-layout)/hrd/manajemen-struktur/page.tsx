@@ -27,6 +27,8 @@ export default function ManajemenStrukturPage() {
             sertifikasi: "K3 Umum",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "45.678.123.9-001.000",
+            rekening: "9988776655",
         },
         {
             nip: "ST002",
@@ -38,6 +40,8 @@ export default function ManajemenStrukturPage() {
             sertifikasi: "K3 Engineering",
             status: "Nonaktif",
             notifikasi: "Belum",
+            npwp: "55.999.888.1-002.000",
+            rekening: "8877665544",
         },
         {
             nip: "ST003",
@@ -49,6 +53,8 @@ export default function ManajemenStrukturPage() {
             sertifikasi: "K3 Mekanik",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "11.222.333.4-567.000",
+            rekening: "7766554433",
         },
     ];
 
@@ -89,7 +95,7 @@ export default function ManajemenStrukturPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Layers className="w-5 h-5" />
@@ -99,9 +105,8 @@ export default function ManajemenStrukturPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-                {/* Filter dan Jumlah */}
+                {/* Filter & Search */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Count */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
                             <Label htmlFor="sertifikasi" className="text-white">
@@ -123,13 +128,11 @@ export default function ManajemenStrukturPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="text-sm font-semibold text-white">
                             Jumlah Struktur: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari struktur..."
@@ -151,6 +154,8 @@ export default function ManajemenStrukturPage() {
                                 <th className="p-4">Jabatan</th>
                                 <th className="p-4">Unit</th>
                                 <th className="p-4">Sertifikasi</th>
+                                <th className="p-4">NPWP</th>
+                                <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
                             </tr>
@@ -165,6 +170,8 @@ export default function ManajemenStrukturPage() {
                                     <td className="p-4">{item.jabatan}</td>
                                     <td className="p-4">{item.unit}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
+                                    <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span
                                             className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}

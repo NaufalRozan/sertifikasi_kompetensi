@@ -25,6 +25,8 @@ export default function ManajemenAsessorPage() {
             sertifikasi: "K3 Umum",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "33.444.555.6-789.000",
+            rekening: "5544332211",
         },
         {
             nip: "AS002",
@@ -34,6 +36,8 @@ export default function ManajemenAsessorPage() {
             sertifikasi: "K3 Engineering",
             status: "Nonaktif",
             notifikasi: "Belum",
+            npwp: "88.999.111.2-345.000",
+            rekening: "6677889900",
         },
         {
             nip: "AS003",
@@ -43,6 +47,8 @@ export default function ManajemenAsessorPage() {
             sertifikasi: "Welding Inspector (CWI)",
             status: "Aktif",
             notifikasi: "Terkirim",
+            npwp: "77.888.222.1-654.000",
+            rekening: "4433221100",
         },
     ];
 
@@ -60,8 +66,8 @@ export default function ManajemenAsessorPage() {
             case "Aktif":
             case "Terkirim":
                 return "bg-green-100 text-green-700";
-            case "Nonaktif":
             case "Belum":
+            case "Nonaktif":
                 return "bg-red-100 text-red-700";
             default:
                 return "bg-gray-100 text-gray-500";
@@ -95,7 +101,6 @@ export default function ManajemenAsessorPage() {
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
                 {/* Filter & Search */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
                             <Label htmlFor="sertifikasi" className="text-white">
@@ -117,13 +122,11 @@ export default function ManajemenAsessorPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="text-sm font-semibold text-white">
                             Jumlah Asessor: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
-                    {/* Search */}
                     <Input
                         type="text"
                         placeholder="Cari asessor..."
@@ -143,6 +146,8 @@ export default function ManajemenAsessorPage() {
                                 <th className="p-4">Email</th>
                                 <th className="p-4">Whatsapp</th>
                                 <th className="p-4">Sertifikasi</th>
+                                <th className="p-4">NPWP</th>
+                                <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
                             </tr>
@@ -155,6 +160,8 @@ export default function ManajemenAsessorPage() {
                                     <td className="p-4">{item.email}</td>
                                     <td className="p-4">{item.whatsapp}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
+                                    <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span
                                             className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
