@@ -136,6 +136,10 @@ export function getMenuList(pathname: string): Group[] {
               href: "/keuangan/keluar",
             },
             {
+              label: "Cashflow",
+              href: "/keuangan/cashflow",
+            },
+            {
               label: "Admin Menu",
               href: "/keuangan/admin",
             },

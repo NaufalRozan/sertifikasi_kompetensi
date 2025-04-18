@@ -136,7 +136,7 @@ export default function KeuanganKeluarPage() {
                                     <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Nominal</th>
                                     <th className="p-4">Keterangan</th>
-                                    <th className="p-4">Invoice</th>
+                                    <th className="p-4">Receipt</th>
                                     <th className="p-4">Aksi</th>
                                 </tr>
                             </thead>
