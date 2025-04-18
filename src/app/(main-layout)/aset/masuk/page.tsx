@@ -5,6 +5,7 @@ import { Bookmark, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -76,10 +77,12 @@ export default function AsetMasukPage() {
         },
     ];
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+            <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-between items-center text-xl font-semibold">
                     <div className="flex items-center gap-2">
                         <Bookmark className="w-5 h-5" />
@@ -89,34 +92,48 @@ export default function AsetMasukPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
-                {/* Filter & Tambah */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2 text-white text-sm">
-                        <Label htmlFor="bulan" className="text-white">
-                            Bulan:
-                        </Label>
-                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                            <SelectTrigger className="w-[140px] bg-white text-black">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="April">April</SelectItem>
-                                <SelectItem value="Mei">Mei</SelectItem>
-                                <SelectItem value="Juni">Juni</SelectItem>
-                                <SelectItem value="Juli">Juli</SelectItem>
-                                <SelectItem value="Agustus">Agustus</SelectItem>
-                            </SelectContent>
-                        </Select>
+            <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
+
+                {/* Filter dan Tambah */}
+                <div className="flex flex-col gap-4 mb-4">
+                    {/* Baris Atas: Filter & Button */}
+                    <div className="flex justify-between items-center flex-wrap gap-4">
+                        <div className="flex items-center gap-2 text-sm text-white">
+                            <Label htmlFor="bulan" className="text-white">
+                                Bulan:
+                            </Label>
+                            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                                <SelectTrigger className="w-[140px] bg-white text-black">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="April">April</SelectItem>
+                                    <SelectItem value="Mei">Mei</SelectItem>
+                                    <SelectItem value="Juni">Juni</SelectItem>
+                                    <SelectItem value="Juli">Juli</SelectItem>
+                                    <SelectItem value="Agustus">Agustus</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Button
+                            onClick={() => router.push("/aset/masuk/add")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                            + Tambah Aset
+                        </Button>
                     </div>
 
-                    <Button
-                        onClick={() => router.push("/aset/masuk/add")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                        + Tambah Aset
-                    </Button>
+                    {/* Baris Bawah: Search */}
+                    <Input
+                        type="text"
+                        placeholder="Cari aset..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                    />
                 </div>
+
 
                 {/* Tabel */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Box } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Card,
     CardHeader,
@@ -48,10 +50,12 @@ export default function ManajemenAsetPage() {
         },
     ];
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+            <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex items-center gap-2 text-xl font-semibold">
                     <Box className="w-5 h-5" />
                     Manajemen Aset
@@ -59,7 +63,7 @@ export default function ManajemenAsetPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10 space-y-6">
+            <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10 space-y-6">
                 {/* Statistik */}
                 <Card className="shadow-md">
                     <CardContent className="py-6 flex justify-between items-center gap-6 flex-wrap">
@@ -67,13 +71,14 @@ export default function ManajemenAsetPage() {
                             <p className="text-sm text-gray-500">Aset masuk bulan ini</p>
                             <p className="text-3xl font-semibold text-gray-700">93</p>
                         </div>
-                        <div className="w-[1px] h-12 bg-gray-200 hidden md:block" />
+                        <div className="h-[120px] w-px bg-gray-300 hidden lg:block" />
                         <div className="flex-1 text-center">
                             <p className="text-sm text-gray-500">Aset keluar bulan ini</p>
                             <p className="text-3xl font-semibold text-gray-700">43</p>
                         </div>
-                        <div className="w-[1px] h-12 bg-gray-200 hidden md:block" />
-                        <div className="flex flex-col gap-2">
+                        <div className="h-[120px] w-px bg-gray-300 hidden lg:block" />
+                        <div className="flex flex-col items-center justify-center text-red-700 gap-2 w-full lg:w-1/4">
+                            <p className="text-md font-semibold">Menu Lainnya</p>
                             <Button onClick={() => router.push("/aset/masuk")} className="bg-blue-600 hover:bg-blue-700 text-white">
                                 Aset Masuk
                             </Button>
@@ -83,6 +88,15 @@ export default function ManajemenAsetPage() {
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Baris Bawah: Search */}
+                <Input
+                    type="text"
+                    placeholder="Cari aset..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                />
 
                 {/* Tabel Aset */}
                 <Card className="shadow-lg">

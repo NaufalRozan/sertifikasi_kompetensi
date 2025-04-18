@@ -4,12 +4,21 @@ import { useState } from "react";
 import { DollarSign, Pencil, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export default function KeuanganKeluarPage() {
     const router = useRouter();
@@ -60,10 +69,12 @@ export default function KeuanganKeluarPage() {
         },
     ];
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+            <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <DollarSign className="w-5 h-5" />
                     Manajemen Keuangan Keluar
@@ -71,34 +82,47 @@ export default function KeuanganKeluarPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
+            <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
+
+
                 {/* Filter dan Tambah */}
-                <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2 text-white text-sm">
-                        <label htmlFor="bulan" className="font-medium">
-                            Bulan :
-                        </label>
-                        <select
-                            id="bulan"
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="text-black border border-gray-300 rounded px-3 py-1"
+                <div className="flex flex-col gap-4 mb-4">
+                    {/* Baris Atas: Filter & Button */}
+                    <div className="flex justify-between items-center flex-wrap gap-4">
+                        <div className="flex items-center gap-2 text-sm text-white">
+                            <Label htmlFor="bulan" className="text-white">
+                                Bulan:
+                            </Label>
+                            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                                <SelectTrigger className="w-[140px] bg-white text-black">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="April">April</SelectItem>
+                                    <SelectItem value="Mei">Mei</SelectItem>
+                                    <SelectItem value="Juni">Juni</SelectItem>
+                                    <SelectItem value="Juli">Juli</SelectItem>
+                                    <SelectItem value="Agustus">Agustus</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Button
+                            onClick={() => router.push("/keuangan/keluar/add")}
+                            className="bg-blue-600 text-white"
                         >
-                            <option>Januari</option>
-                            <option>Februari</option>
-                            <option>Maret</option>
-                            <option>April</option>
-                            <option>Mei</option>
-                            <option>Juni</option>
-                        </select>
+                            + Tambah Transaksi
+                        </Button>
                     </div>
 
-                    <Button
-                        onClick={() => router.push("/keuangan/keluar/add")}
-                        className="bg-blue-600 text-white"
-                    >
-                        + Tambah Transaksi
-                    </Button>
+                    {/* Baris Bawah: Search */}
+                    <Input
+                        type="text"
+                        placeholder="Cari transaksi..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                    />
                 </div>
 
                 {/* Tabel */}

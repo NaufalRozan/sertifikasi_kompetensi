@@ -34,14 +34,14 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
       {/* Header */}
-      <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+      <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
         <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-6xl font-semibold">
           Dashboard
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="w-full max-w-7xl -mt-24 z-10 relative pb-16 pt-6">
+      <div className="w-full max-w-7xl -mt-52 z-10 relative pb-16 pt-6">
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <InfoCard

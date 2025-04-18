@@ -39,7 +39,7 @@ export default function EventPage() {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+            <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <CalendarDays className="w-5 h-5" />
                     Event
@@ -47,7 +47,7 @@ export default function EventPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
+            <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
                 {/* Tombol Tambah */}
                 <div className="flex justify-end mb-4">
                     <Button

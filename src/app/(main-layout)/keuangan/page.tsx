@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DollarSign, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Card,
     CardContent,
@@ -46,10 +48,12 @@ export default function ManajemenKeuanganPage() {
         },
     ];
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header */}
-            <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
+            <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <DollarSign className="w-5 h-5" />
                     Manajemen Keuangan
@@ -57,7 +61,7 @@ export default function ManajemenKeuanganPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative space-y-6 px-4 pb-10">
+            <div className="w-full max-w-7xl -mt-52 z-10 relative space-y-6 px-4 pb-10">
                 {/* Admin Menu */}
                 <div className="flex justify-end">
                     <Button onClick={() => router.push("/keuangan/admin")} className="bg-blue-600">
@@ -105,6 +109,15 @@ export default function ManajemenKeuanganPage() {
                     </div>
                 </Card>
 
+                {/* Baris Bawah: Search */}
+                <Input
+                    type="text"
+                    placeholder="Cari transaksi..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                />
+
                 {/* Table */}
                 <Card>
                     <CardContent className="overflow-auto px-0">
@@ -134,8 +147,8 @@ export default function ManajemenKeuanganPage() {
                                         <td className="p-4">
                                             <span
                                                 className={`text-xs px-3 py-1 font-medium rounded-full ${item.status === "Diterima"
-                                                        ? "bg-green-100 text-green-700"
-                                                        : "bg-red-100 text-red-700"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : "bg-red-100 text-red-700"
                                                     }`}
                                             >
                                                 {item.status}
