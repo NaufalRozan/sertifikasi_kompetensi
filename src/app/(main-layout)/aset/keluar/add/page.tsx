@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { PlusCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AddAsetKeluarPage() {
     const [nama, setNama] = useState("");
@@ -10,7 +14,7 @@ export default function AddAsetKeluarPage() {
     const [stok, setStok] = useState(0);
     const [satuan, setSatuan] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = { nama, tanggal, distributor, stok, satuan };
         console.log("Aset Keluar Ditambahkan:", data);
@@ -29,72 +33,68 @@ export default function AddAsetKeluarPage() {
             </div>
 
             {/* Form */}
-            <div className="w-full max-w-xl bg-white -mt-24 z-10 relative p-6 rounded-2xl shadow-lg">
-                <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-                    <div>
-                        <label className="font-medium block mb-1">Nama Aset</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={nama}
-                            onChange={(e) => setNama(e.target.value)}
-                            required
-                        />
-                    </div>
+            <div className="w-full max-w-xl -mt-24 z-10 relative mx-auto">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Form Tambah Aset Keluar</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-1">
+                                <Label>Nama Aset</Label>
+                                <Input
+                                    value={nama}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setNama(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Tanggal Keluar</label>
-                        <input
-                            type="date"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={tanggal}
-                            onChange={(e) => setTanggal(e.target.value)}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label>Tanggal Keluar</Label>
+                                <Input
+                                    type="date"
+                                    value={tanggal}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setTanggal(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Distributor</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={distributor}
-                            onChange={(e) => setDistributor(e.target.value)}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label>Distributor</Label>
+                                <Input
+                                    value={distributor}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setDistributor(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Stok</label>
-                        <input
-                            type="number"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={stok}
-                            onChange={(e) => setStok(parseInt(e.target.value))}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label>Stok</Label>
+                                <Input
+                                    type="number"
+                                    value={stok}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setStok(parseInt(e.target.value, 10) || 0)
+                                    }
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Satuan</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={satuan}
-                            onChange={(e) => setSatuan(e.target.value)}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label>Satuan</Label>
+                                <Input
+                                    value={satuan}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSatuan(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
+                            <div className="flex justify-end pt-4">
+                                <Button type="submit">Simpan</Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

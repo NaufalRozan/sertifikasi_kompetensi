@@ -1,9 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 export default function AddTransaksiKeluarPage() {
+    const router = useRouter();
+
     const [tanggal, setTanggal] = useState("");
     const [deskripsi, setDeskripsi] = useState("");
     const [nominal, setNominal] = useState(0);
@@ -14,6 +22,7 @@ export default function AddTransaksiKeluarPage() {
         const data = { tanggal, deskripsi, nominal, keterangan };
         console.log("Transaksi Keluar:", data);
         alert("Transaksi keluar berhasil ditambahkan!");
+        router.push("/keuangan/keluar");
     };
 
     return (
@@ -26,62 +35,63 @@ export default function AddTransaksiKeluarPage() {
                 </div>
             </div>
 
-            {/* Form */}
-            <div className="w-full max-w-xl bg-white -mt-24 z-10 relative p-6 rounded-2xl shadow-lg">
-                <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-                    <div>
-                        <label className="font-medium block mb-1">Tanggal</label>
-                        <input
-                            type="date"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={tanggal}
-                            onChange={(e) => setTanggal(e.target.value)}
-                            required
-                        />
-                    </div>
+            {/* Form Card */}
+            <div className="w-full max-w-xl -mt-24 z-10 relative p-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Form Transaksi Keluar</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-1">
+                                <Label htmlFor="tanggal">Tanggal</Label>
+                                <Input
+                                    type="date"
+                                    id="tanggal"
+                                    value={tanggal}
+                                    onChange={(e) => setTanggal(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Deskripsi</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={deskripsi}
-                            onChange={(e) => setDeskripsi(e.target.value)}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="deskripsi">Deskripsi</Label>
+                                <Input
+                                    id="deskripsi"
+                                    value={deskripsi}
+                                    onChange={(e) => setDeskripsi(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Nominal</label>
-                        <input
-                            type="number"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={nominal}
-                            onChange={(e) => setNominal(parseInt(e.target.value))}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="nominal">Nominal</Label>
+                                <Input
+                                    type="number"
+                                    id="nominal"
+                                    value={nominal}
+                                    onChange={(e) => setNominal(parseInt(e.target.value))}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Keterangan</label>
-                        <textarea
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            rows={3}
-                            value={keterangan}
-                            onChange={(e) => setKeterangan(e.target.value)}
-                            required
-                        />
-                    </div>
+                            <div className="space-y-1">
+                                <Label htmlFor="keterangan">Keterangan</Label>
+                                <Textarea
+                                    id="keterangan"
+                                    rows={3}
+                                    value={keterangan}
+                                    onChange={(e) => setKeterangan(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
+                            <div className="flex justify-end pt-2">
+                                <Button type="submit">Simpan</Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

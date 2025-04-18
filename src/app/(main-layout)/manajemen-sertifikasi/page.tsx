@@ -3,10 +3,19 @@
 import { useState } from "react";
 import { Pencil, Trash2, Book } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export default function SertifikasiPage() {
     const router = useRouter();
-    const [selectedSertifikasi, setSelectedSertifikasi] = useState("K3 Mekanik");
+    const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
 
     const data = [
         { no: 1, kode: "CERT-011", nama: "K3 Mekanik", tersertifikasi: 15, terdaftar: 36 },
@@ -17,9 +26,16 @@ export default function SertifikasiPage() {
         { no: 6, kode: "CERT-016", nama: "NDT Level II", tersertifikasi: 28, terdaftar: 29 },
     ];
 
+    const uniqueNama = Array.from(new Set(data.map((item) => item.nama)));
+
+    const filteredData =
+        selectedSertifikasi === "Semua"
+            ? data
+            : data.filter((item) => item.nama === selectedSertifikasi);
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Book className="w-5 h-5" />
@@ -28,36 +44,37 @@ export default function SertifikasiPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative">
-                {/* Filter sertifikasi */}
-                <div className="flex justify-between mb-4">
-                    <div className="text-sm flex items-center gap-2 text-white">
-                        <label htmlFor="sertifikasi" className="font-medium">Nama Sertifikasi :</label>
-                        <select
-                            id="sertifikasi"
-                            className="text-black border border-gray-300 rounded px-3 py-1 text-sm"
-                            value={selectedSertifikasi}
-                            onChange={(e) => setSelectedSertifikasi(e.target.value)}
-                        >
-                            <option>K3 Mekanik</option>
-                            <option>K3 Lingkungan Kerja</option>
-                            <option>K3 Engineering</option>
-                            <option>K3 Umum</option>
-                            <option>Welding Inspector (CWI)</option>
-                            <option>NDT Level II</option>
-                        </select>
+            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
+                {/* Filter dan Tambah */}
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-2 text-sm text-white">
+                        <Label htmlFor="sertifikasi" className="text-white">
+                            Nama Sertifikasi:
+                        </Label>
+                        <Select value={selectedSertifikasi} onValueChange={setSelectedSertifikasi}>
+                            <SelectTrigger className="w-[250px] bg-white text-black">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Semua">Semua</SelectItem>
+                                {uniqueNama.map((nama) => (
+                                    <SelectItem key={nama} value={nama}>
+                                        {nama}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
-                    {/* Tombol Tambah Sertifikasi */}
-                    <button
+                    <Button
                         onClick={() => router.push("/manajemen-sertifikasi/add")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium shadow transition duration-200"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                         + Tambah Sertifikasi
-                    </button>
+                    </Button>
                 </div>
 
-                {/* Tabel */}
+                {/* Tabel Sertifikasi */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <table className="w-full text-sm text-left">
                         <thead className="text-red-700 font-semibold border-b">
@@ -65,13 +82,13 @@ export default function SertifikasiPage() {
                                 <th className="p-4">No</th>
                                 <th className="p-4">Kode</th>
                                 <th className="p-4">Nama</th>
-                                <th className="p-4">Peserta Tersertifikasi</th>
-                                <th className="p-4">Peserta Terdaftar</th>
+                                <th className="p-4">Tersertifikasi</th>
+                                <th className="p-4">Terdaftar</th>
                                 <th className="p-4">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((item) => (
+                            {filteredData.map((item) => (
                                 <tr key={item.no} className="border-b hover:bg-gray-50">
                                     <td className="p-4">{item.no}</td>
                                     <td className="p-4">{item.kode}</td>
@@ -79,12 +96,26 @@ export default function SertifikasiPage() {
                                     <td className="p-4">{item.tersertifikasi}</td>
                                     <td className="p-4">{item.terdaftar}</td>
                                     <td className="p-4 space-x-2 flex items-center">
-                                        <button className="p-1 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // logic edit
+                                            }}
+                                        >
                                             <Pencil size={16} />
-                                        </button>
-                                        <button className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200">
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // logic delete
+                                            }}
+                                        >
                                             <Trash2 size={16} />
-                                        </button>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -93,12 +124,12 @@ export default function SertifikasiPage() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 py-4">
-                        <button className="text-gray-500 hover:text-red-700">&lt;</button>
-                        <button className="w-7 h-7 rounded-full bg-red-700 text-white text-xs font-medium">01</button>
-                        <button className="text-sm hover:underline">02</button>
-                        <button className="text-sm hover:underline">03</button>
+                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&lt;</Button>
+                        <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
+                        <Button variant="link" size="sm">02</Button>
+                        <Button variant="link" size="sm">03</Button>
                         <span className="text-sm text-gray-500">...</span>
-                        <button className="text-gray-500 hover:text-red-700">&gt;</button>
+                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&gt;</Button>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { Bookmark, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function AsetMasukPage() {
     const router = useRouter();
@@ -69,7 +78,7 @@ export default function AsetMasukPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[200px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-between items-center text-xl font-semibold">
                     <div className="flex items-center gap-2">
@@ -80,36 +89,37 @@ export default function AsetMasukPage() {
             </div>
 
             {/* Konten */}
-            <div className="w-full max-w-7xl -mt-24 z-10 relative">
-                {/* Filter Bulan */}
-                <div className="flex justify-between mb-4">
-                    <div className="text-sm flex items-center gap-2 text-white">
-                        <label htmlFor="bulan" className="font-medium">
-                            Bulan :
-                        </label>
-                        <select
-                            id="bulan"
-                            className="text-black border border-gray-300 rounded px-3 py-1 text-sm"
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
-                        >
-                            <option>April</option>
-                            <option>Mei</option>
-                            <option>Juni</option>
-                            <option>Juli</option>
-                            <option>Agustus</option>
-                        </select>
+            <div className="w-full max-w-7xl -mt-24 z-10 relative px-4 pb-10">
+                {/* Filter & Tambah */}
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2 text-white text-sm">
+                        <Label htmlFor="bulan" className="text-white">
+                            Bulan:
+                        </Label>
+                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                            <SelectTrigger className="w-[140px] bg-white text-black">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="April">April</SelectItem>
+                                <SelectItem value="Mei">Mei</SelectItem>
+                                <SelectItem value="Juni">Juni</SelectItem>
+                                <SelectItem value="Juli">Juli</SelectItem>
+                                <SelectItem value="Agustus">Agustus</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
-                    <button
+
+                    <Button
                         onClick={() => router.push("/aset/masuk/add")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium shadow transition duration-200"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                         + Tambah Aset
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Tabel */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
                     <table className="w-full text-sm text-left">
                         <thead className="text-red-700 font-semibold border-b">
                             <tr>
@@ -132,12 +142,12 @@ export default function AsetMasukPage() {
                                     <td className="p-4">{item.stok}</td>
                                     <td className="p-4">{item.satuan}</td>
                                     <td className="p-4 flex items-center gap-2">
-                                        <button className="p-1 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
-                                            <Pencil size={16} />
-                                        </button>
-                                        <button className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200">
-                                            <Trash2 size={16} />
-                                        </button>
+                                        <Button variant="ghost" size="icon">
+                                            <Pencil size={16} className="text-yellow-600" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon">
+                                            <Trash2 size={16} className="text-red-600" />
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -146,12 +156,16 @@ export default function AsetMasukPage() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 py-4">
-                        <button className="text-gray-500 hover:text-red-700">&lt;</button>
-                        <button className="w-7 h-7 rounded-full bg-red-700 text-white text-xs font-medium">01</button>
-                        <button className="text-sm hover:underline">02</button>
-                        <button className="text-sm hover:underline">03</button>
+                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            &lt;
+                        </Button>
+                        <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
+                        <Button variant="link" size="sm">02</Button>
+                        <Button variant="link" size="sm">03</Button>
                         <span className="text-sm text-gray-500">...</span>
-                        <button className="text-gray-500 hover:text-red-700">&gt;</button>
+                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            &gt;
+                        </Button>
                     </div>
                 </div>
             </div>

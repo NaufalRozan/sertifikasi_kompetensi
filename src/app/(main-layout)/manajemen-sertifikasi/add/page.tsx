@@ -1,20 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { PlusCircle } from "lucide-react";
 
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 export default function AddSertifikasiPage() {
+    const router = useRouter();
     const [kode, setKode] = useState("");
     const [nama, setNama] = useState("");
     const [tersertifikasi, setTersertifikasi] = useState(0);
     const [terdaftar, setTerdaftar] = useState(0);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         const data = { kode, nama, tersertifikasi, terdaftar };
         console.log("Data Sertifikasi Baru:", data);
         alert("Data sertifikasi berhasil ditambahkan!");
-        // TODO: Kirim ke API / backend
+        // TODO: Kirim ke API atau redirect
+        router.push("/manajemen-sertifikasi");
     };
 
     return (
@@ -27,60 +36,63 @@ export default function AddSertifikasiPage() {
                 </div>
             </div>
 
-            {/* Form Tambah */}
-            <div className="w-full max-w-xl bg-white -mt-24 z-10 relative p-6 rounded-2xl shadow-lg">
-                <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-                    <div>
-                        <label className="font-medium block mb-1">Kode Sertifikasi</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={kode}
-                            onChange={(e) => setKode(e.target.value)}
-                            required
-                        />
-                    </div>
+            {/* Form Card */}
+            <div className="w-full max-w-xl -mt-24 z-10 relative mx-auto">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Form Tambah Sertifikasi</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Kode */}
+                            <div className="space-y-1">
+                                <Label>Kode Sertifikasi</Label>
+                                <Input
+                                    type="text"
+                                    value={kode}
+                                    onChange={(e) => setKode(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Nama Sertifikasi</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={nama}
-                            onChange={(e) => setNama(e.target.value)}
-                            required
-                        />
-                    </div>
+                            {/* Nama */}
+                            <div className="space-y-1">
+                                <Label>Nama Sertifikasi</Label>
+                                <Input
+                                    type="text"
+                                    value={nama}
+                                    onChange={(e) => setNama(e.target.value)}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Jumlah Peserta Tersertifikasi</label>
-                        <input
-                            type="number"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={tersertifikasi}
-                            onChange={(e) => setTersertifikasi(parseInt(e.target.value))}
-                        />
-                    </div>
+                            {/* Tersertifikasi */}
+                            <div className="space-y-1">
+                                <Label>Jumlah Peserta Tersertifikasi</Label>
+                                <Input
+                                    type="number"
+                                    value={tersertifikasi}
+                                    onChange={(e) => setTersertifikasi(parseInt(e.target.value) || 0)}
+                                />
+                            </div>
 
-                    <div>
-                        <label className="font-medium block mb-1">Jumlah Peserta Terdaftar</label>
-                        <input
-                            type="number"
-                            className="w-full border border-gray-300 rounded px-3 py-2"
-                            value={terdaftar}
-                            onChange={(e) => setTerdaftar(parseInt(e.target.value))}
-                        />
-                    </div>
+                            {/* Terdaftar */}
+                            <div className="space-y-1">
+                                <Label>Jumlah Peserta Terdaftar</Label>
+                                <Input
+                                    type="number"
+                                    value={terdaftar}
+                                    onChange={(e) => setTerdaftar(parseInt(e.target.value) || 0)}
+                                />
+                            </div>
 
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
+                            {/* Submit */}
+                            <div className="flex justify-end pt-4">
+                                <Button type="submit">Simpan</Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
