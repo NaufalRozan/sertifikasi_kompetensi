@@ -10,7 +10,8 @@ import {
   BookIcon,
   User2,
   Box,
-  DollarSign
+  DollarSign,
+  Building2
 } from "lucide-react";
 
 type Submenu = {
@@ -71,17 +72,6 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "",
       menus: [
         {
-          href: "/vendor",
-          label: "Manajemen Vendor",
-          icon: Users,
-          submenus: []
-        }
-      ]
-    },
-    {
-      groupLabel: "",
-      menus: [
-        {
           label: "Manajemen HRD",
           icon: Users,
           href: "/hrd",
@@ -109,6 +99,17 @@ export function getMenuList(pathname: string): Group[] {
           ],
         },
       ],
+    },
+    {
+      groupLabel: "",
+      menus: [
+        {
+          href: "/vendor",
+          label: "Manajemen Vendor",
+          icon: Building2,
+          submenus: []
+        }
+      ]
     },
     {
       groupLabel: "",

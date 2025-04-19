@@ -158,11 +158,19 @@ export default function AsetKeluarPage() {
                                     <td className="p-4">{item.stok}</td>
                                     <td className="p-4">{item.satuan}</td>
                                     <td className="p-4 flex items-center gap-2">
-                                        <Button variant="ghost" size="icon">
-                                            <Pencil size={16} className="text-yellow-600" />
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
+                                        >
+                                            <Pencil size={16} />
                                         </Button>
-                                        <Button variant="ghost" size="icon">
-                                            <Trash2 size={16} className="text-red-600" />
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="bg-red-100 hover:bg-red-200 text-red-600"
+                                        >
+                                            <Trash2 size={16} />
                                         </Button>
                                     </td>
                                 </tr>

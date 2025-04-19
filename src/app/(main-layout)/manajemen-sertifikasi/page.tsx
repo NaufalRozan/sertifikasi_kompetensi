@@ -110,24 +110,18 @@ export default function SertifikasiPage() {
                                     <td className="p-4">{item.nama}</td>
                                     <td className="p-4">{item.tersertifikasi}</td>
                                     <td className="p-4">{item.terdaftar}</td>
-                                    <td className="p-4 space-x-2 flex items-center">
+                                    <td className="p-4 flex items-center gap-2">
                                         <Button
-                                            variant="ghost"
                                             size="icon"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // logic edit
-                                            }}
+                                            variant="ghost"
+                                            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
                                         >
                                             <Pencil size={16} />
                                         </Button>
                                         <Button
-                                            variant="ghost"
                                             size="icon"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // logic delete
-                                            }}
+                                            variant="ghost"
+                                            className="bg-red-100 hover:bg-red-200 text-red-600"
                                         >
                                             <Trash2 size={16} />
                                         </Button>

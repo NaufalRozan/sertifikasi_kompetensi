@@ -82,12 +82,19 @@ export default function AddAsetKeluarPage() {
 
                             <div className="space-y-1">
                                 <Label>Satuan</Label>
-                                <Input
+                                <select
                                     value={satuan}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSatuan(e.target.value)}
+                                    onChange={(e) => setSatuan(e.target.value)}
                                     required
-                                />
+                                    className="w-full border rounded-md px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-700"
+                                >
+                                    <option value="" disabled>Pilih satuan</option>
+                                    <option value="Unit">Unit</option>
+                                    <option value="Liter">Liter</option>
+                                    <option value="Pcs">Pcs</option>
+                                </select>
                             </div>
+
 
                             <div className="flex justify-end pt-4">
                                 <Button type="submit">Simpan</Button>

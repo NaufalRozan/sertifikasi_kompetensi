@@ -6,6 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+
+// Daftar vendor (simulasi data dari manajemen vendor)
+const vendorList = [
+    { id: 1, nama: "PT. Mesin Jaya" },
+    { id: 2, nama: "CV. Baja Kuat" },
+    { id: 3, nama: "UD. Perkakas" },
+    { id: 4, nama: "PT. Pelumas Indo" },
+    { id: 5, nama: "CV. Udara Power" },
+];
 
 export default function AddAsetMasukPage() {
     const [nama, setNama] = useState("");
@@ -54,6 +64,7 @@ export default function AddAsetMasukPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
+
                             <div className="space-y-1">
                                 <Label>Nama Aset</Label>
                                 <Input
@@ -88,15 +99,22 @@ export default function AddAsetMasukPage() {
                                 />
                             </div>
 
+                            {/* VENDOR DROPDOWN */}
                             <div className="space-y-1">
                                 <Label>Vendor</Label>
-                                <Input
+                                <select
                                     value={vendor}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                        setVendor(e.target.value)
-                                    }
+                                    onChange={(e) => setVendor(e.target.value)}
                                     required
-                                />
+                                    className="w-full border rounded-md px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-700"
+                                >
+                                    <option value="" disabled>Pilih vendor</option>
+                                    {vendorList.map((v) => (
+                                        <option key={v.id} value={v.nama}>
+                                            {v.nama}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="space-y-1">
@@ -114,9 +132,7 @@ export default function AddAsetMasukPage() {
                                 <Label>Kondisi</Label>
                                 <select
                                     value={kondisi}
-                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                        setKondisi(e.target.value)
-                                    }
+                                    onChange={(e) => setKondisi(e.target.value)}
                                     className="w-full border rounded-md px-3 py-2 bg-white text-sm"
                                 >
                                     <option value="Tidak Rusak">Tidak Rusak</option>
@@ -150,18 +166,24 @@ export default function AddAsetMasukPage() {
 
                             <div className="space-y-1">
                                 <Label>Satuan</Label>
-                                <Input
+                                <select
                                     value={satuan}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                        setSatuan(e.target.value)
-                                    }
+                                    onChange={(e) => setSatuan(e.target.value)}
                                     required
-                                />
+                                    className="w-full border rounded-md px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-red-700"
+                                >
+                                    <option value="" disabled>Pilih satuan</option>
+                                    <option value="Unit">Unit</option>
+                                    <option value="Liter">Liter</option>
+                                    <option value="Pcs">Pcs</option>
+                                </select>
                             </div>
+
 
                             <div className="flex justify-end pt-4">
                                 <Button type="submit">Simpan</Button>
                             </div>
+
                         </form>
                     </CardContent>
                 </Card>

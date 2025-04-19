@@ -74,20 +74,15 @@ function SidebarContent({
       className="flex flex-col h-full w-full"
     >
       {/* Header Title */}
-      <div className="flex items-center px-4 py-3">
-        <Button variant="link" asChild className="px-0">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <h1
-              className={cn(
-                "font-bold text-lg whitespace-nowrap transition-all",
-                collapsed ? "opacity-0 hidden" : "opacity-100"
-              )}
-            >
-              Sertifikasi Kompetensi
-            </h1>
-          </Link>
-        </Button>
+      <div className="flex items-center justify-center w-full px-4 py-6">
+        {!collapsed && (
+          <div className="leading-tight">
+            <div className="font-bold text-black text-[20px] text-left">Sertifikasi</div>
+            <div className="font-bold italic text-[20px] text-[#A94442] pl-6">Kompetensi</div>
+          </div>
+        )}
       </div>
+
 
       {/* Menu Scrollable Area */}
       <div className="flex-1 overflow-hidden">
