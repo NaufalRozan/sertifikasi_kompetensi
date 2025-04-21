@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pencil, Trash2, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BASE_URL } from "@/constant/BaseURL";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,18 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { useEffect } from "react";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 
 
 export default function ProgramPage() {
@@ -48,9 +61,6 @@ export default function ProgramPage() {
 
         fetchData();
     }, []);
-
-
-
 
 
     const getStatusStyle = (status: string) => {
@@ -148,21 +158,53 @@ export default function ProgramPage() {
                                             size="icon"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                // Edit logic here
+                                                router.push(`/program/edit/${item.id}`); // ⬅️ buka halaman edit
                                             }}
                                         >
                                             <Pencil size={16} />
                                         </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // Delete logic here
-                                            }}
-                                        >
-                                            <Trash2 size={16} />
-                                        </Button>
+
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={(e) => e.stopPropagation()} // hindari trigger card navigation
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Tindakan ini tidak bisa dibatalkan. Data program akan hilang secara permanen.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        className="bg-red-600 hover:bg-red-700 text-white"
+                                                        onClick={async () => {
+                                                            try {
+                                                                await axios.delete(`${BASE_URL}/programs/${item.id}`, {
+                                                                    withCredentials: true,
+                                                                });
+                                                                setData((prev) => prev.filter((p) => p.id !== item.id));
+                                                                toast.success("Program berhasil dihapus!");
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                toast.error("Gagal menghapus program.");
+                                                            }
+                                                        }}
+                                                    >
+                                                        Hapus
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+
+
                                     </div>
                                 </CardContent>
                             </Card>
