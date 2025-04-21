@@ -7,6 +7,11 @@ import { Loader2, User } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '@/lib/features/auth/authActions';
+import { AppDispatch } from '@/lib/store';
+import { useForm } from 'react-hook-form';
+import { updateUser } from '@/lib/features/auth/authSlice';
 
 
 const AuthPage = () => {

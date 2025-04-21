@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { Ellipsis, LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
@@ -22,6 +22,14 @@ interface MenuProps {
   isOpen: boolean | undefined;
 }
 
+import axios from "axios";
+import { toast } from "sonner";
+import { BASE_URL } from "@/constant/BaseURL";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { resetUser } from "@/lib/features/auth/authSlice";
+import { permission } from "process";
+
 export function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
@@ -31,6 +39,9 @@ export function Menu({ isOpen }: MenuProps) {
   const isKeuanganPath = pathname.startsWith("/keuangan");
   const [isHrdExpanded, setIsHrdExpanded] = useState(false);
   const isHrdPath = pathname.startsWith("/hrd");
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
 
   useEffect(() => {
@@ -56,6 +67,34 @@ export function Menu({ isOpen }: MenuProps) {
       setIsHrdExpanded(false);
     }
   }, [pathname]);
+
+  const onSubmitSignOut: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+
+    try {
+      toast.promise(
+        axios.delete(
+          `${BASE_URL}/auth/logout`,
+          {
+            withCredentials: true
+          }
+        ),
+        {
+          loading: 'Logging out...',
+          success: async (response) => {
+            dispatch(
+              resetUser()
+            )
+            router.push('/auth');
+            return 'Logged out successfully';
+          },
+          error: 'Error logging out'
+        }
+      )
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -166,7 +205,7 @@ export function Menu({ isOpen }: MenuProps) {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => { }}
+                    onClick={onSubmitSignOut}
                     variant="outline"
                     className="w-full justify-center h-10 mt-5"
                   >

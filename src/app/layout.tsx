@@ -4,14 +4,16 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Toaster } from "sonner";
+import StoreProvider from "./StoreProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.APP_URL
       ? `${process.env.APP_URL}`
       : process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : `http://localhost:${process.env.PORT || 3000}`
+        ? `https://${process.env.VERCEL_URL}`
+        : `http://localhost:${process.env.PORT || 3000}`
   ),
   title: "Sertifikasi Kompetensi",
   description:
@@ -42,8 +44,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={GeistSans.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
+          <StoreProvider>
+            {children}
+          </StoreProvider>
+          <Toaster richColors closeButton />
         </ThemeProvider>
       </body>
     </html>
