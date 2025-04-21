@@ -7,13 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import axios from "axios";
+import { BASE_URL } from "@/constant/BaseURL";
+import { toast } from "sonner";
 
 export default function AddNotulensiPage() {
-    const { id } = useParams();
+    const { id: programId } = useParams();
     const router = useRouter();
 
-    const [tanggal, setTanggal] = useState("");
     const [nama, setNama] = useState("");
+    const [description, setDescription] = useState("");
+    const [tanggal, setTanggal] = useState("");
     const [file, setFile] = useState<File | null>(null);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +29,7 @@ export default function AddNotulensiPage() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!file) {
@@ -33,17 +37,36 @@ export default function AddNotulensiPage() {
             return;
         }
 
-        const notulensiData = {
-            nama,
-            tanggal,
-            fileName: file.name,
-        };
+        const formData = new FormData();
+        formData.append("name", nama);
+        formData.append("description", description);
+        formData.append("tanggal", tanggal);
+        formData.append("programId", programId as string);
+        formData.append("files", file); // ✅ PENTING: gunakan "files" sesuai backend
 
-        // Simulasi pengiriman data
-        console.log("Notulensi Baru:", notulensiData);
-        alert("Notulensi berhasil ditambahkan!");
-        router.push(`/program/${id}/notulensi`);
+        toast.promise(
+            axios.post(`${BASE_URL}/notulensi`, formData, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }),
+            {
+                loading: "Mengunggah notulensi...",
+                success: () => {
+                    setTimeout(() => {
+                        router.push(`/program/${programId}/subprogram`);
+                    }, 500);
+                    return "Notulensi berhasil ditambahkan!";
+                },
+                error: (e) => {
+                    const msg = e?.response?.data?.message || e.message;
+                    return `Gagal menambahkan notulensi: ${msg}`;
+                },
+            }
+        );
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -69,6 +92,16 @@ export default function AddNotulensiPage() {
                                 <Input
                                     value={nama}
                                     onChange={(e) => setNama(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            {/* Deskripsi */}
+                            <div className="space-y-1">
+                                <Label>Deskripsi</Label>
+                                <Input
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
                                     required
                                 />
                             </div>

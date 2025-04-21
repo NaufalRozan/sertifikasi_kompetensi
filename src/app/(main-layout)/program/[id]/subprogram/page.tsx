@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
 import {
     CalendarDays,
     ClipboardList,
@@ -10,29 +12,59 @@ import {
 } from "lucide-react";
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { BASE_URL } from "@/constant/BaseURL";
+
 
 export default function SubProgramView() {
     const router = useRouter();
     const params = useParams();
     const programId = params.id;
 
+    const [eventData, setEventData] = useState([]);
+    const [notulensiData, setNotulensiData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [eventRes, notulensiRes] = await Promise.all([
+                    axios.get(`${BASE_URL}/events/?program_id=${programId}`, {
+                        withCredentials: true,
+                    }),
+                    axios.get(`${BASE_URL}/notulensi/?program_id=${programId}`, {
+                        withCredentials: true,
+                    }),
+                ]);
+                setEventData(eventRes.data.data);
+                setNotulensiData(notulensiRes.data.data);
+            } catch (err) {
+                console.error(err);
+                setError("Gagal memuat data.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [programId]);
+
     const topRow = [
         {
             title: "Event",
             icon: <CalendarDays className="w-6 h-6" />,
             description: "Kelola jadwal dan rincian event program.",
-            link: `/program/${programId}/event`,
+            link: `/program/${programId}/event//add`,
         },
         {
             title: "Notulensi",
             icon: <ClipboardList className="w-6 h-6" />,
             description: "Catatan rapat dan dokumentasi kegiatan.",
-            link: `/program/${programId}/notulensi`,
+            link: `/program/${programId}/notulensi/add`,
         },
     ];
 
@@ -51,53 +83,25 @@ export default function SubProgramView() {
         },
     ];
 
-    const eventData = [
-        {
-            title: "Workshop React",
-            date: "12 April 2025 - 13 April 2025",
-            jenis: "Workshop",
-            harga: 150000,
-            location: "Gedung A",
-            status: "Aktif",
-        },
-        {
-            title: "Pelatihan UI/UX",
-            date: "20 April 2025 - 21 April 2025",
-            jenis: "Pelatihan",
-            harga: 100000,
-            location: "Ruang 204",
-            status: "Pending",
-        },
-    ];
-
-    const notulensiData = [
-        {
-            nama: "Koordinasi Program",
-            tanggal: "2025-04-10",
-            fileName: "koordinasi-program.pdf",
-        },
-        {
-            nama: "Evaluasi Event",
-            tanggal: "2025-04-18",
-            fileName: "evaluasi-event.pdf",
-        },
-    ];
-
-
     function getBadgeStyle(status: string) {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
             case "aktif":
-            case "terkirim":
                 return "bg-green-100 text-green-800";
             case "pending":
-            case "menunggu":
                 return "bg-yellow-100 text-yellow-800";
             case "batal":
-            case "gagal":
                 return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
         }
+    }
+
+    if (loading) {
+        return <p className="text-center mt-10 text-gray-500">Memuat data...</p>;
+    }
+
+    if (error) {
+        return <p className="text-center mt-10 text-red-500">{error}</p>;
     }
 
     return (
@@ -157,22 +161,19 @@ export default function SubProgramView() {
                                 <th className="p-4">Jenis</th>
                                 <th className="p-4">Harga</th>
                                 <th className="p-4">Tempat</th>
-                                <th className="p-4">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {eventData.map((item, idx) => (
+                            {eventData.map((item: any, idx) => (
                                 <tr key={idx} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{item.title}</td>
-                                    <td className="p-4">{item.date}</td>
-                                    <td className="p-4">{item.jenis}</td>
-                                    <td className="p-4">Rp{item.harga.toLocaleString()}</td>
-                                    <td className="p-4">{item.location}</td>
+                                    <td className="p-4">{item.name}</td>
                                     <td className="p-4">
-                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>
-                                            {item.status}
-                                        </span>
+                                        {new Date(item.startDate).toLocaleDateString("id-ID")} -{" "}
+                                        {new Date(item.endDate).toLocaleDateString("id-ID")}
                                     </td>
+                                    <td className="p-4">{item.description}</td>
+                                    <td className="p-4">Rp{item.harga.toLocaleString()}</td>
+                                    <td className="p-4">{item.tempat}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -182,28 +183,54 @@ export default function SubProgramView() {
                 {/* Tabel Notulensi */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto mt-8">
                     <h2 className="text-xl font-semibold mb-4 text-red-700 px-4 pt-4">Daftar Notulensi</h2>
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-red-700 font-semibold border-b">
-                            <tr>
-                                <th className="p-4">Topik</th>
-                                <th className="p-4">Tanggal</th>
-                                <th className="p-4">File</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {notulensiData.map((item, idx) => (
-                                <tr key={idx} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{item.nama}</td>
-                                    <td className="p-4">{item.tanggal}</td>
-                                    <td className="p-4">
-                                        <a href="#" className="text-blue-600 underline">{item.fileName}</a>
-                                    </td>
+                    {notulensiData.length === 0 ? (
+                        <p className="px-4 pb-4 text-gray-600">Belum ada notulensi.</p>
+                    ) : (
+                        <table className="w-full text-sm text-left">
+                            <thead className="text-red-700 font-semibold border-b">
+                                <tr>
+                                    <th className="p-4">Topik</th>
+                                    <th className="p-4">Tanggal</th>
+                                    <th className="p-4">File</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {notulensiData.map((item: any, idx) => (
+                                    <tr key={idx} className="border-b hover:bg-gray-50">
+                                        <td className="p-4">{item.name}</td>
+                                        <td className="p-4">
+                                            {new Date(item.tanggal).toLocaleDateString("id-ID", {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}
+                                        </td>
+                                        <td className="p-4 space-y-2">
+                                            {item.File && item.File.length > 0 ? (
+                                                item.File.map((file: any, index: number) => (
+                                                    <div key={index}>
+                                                        <a
+                                                            href={`${BASE_URL}/notulensi/doc/${file.id}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 hover:underline"
+                                                        >
+                                                            📄 {file.originalName || file.filename}
+                                                        </a>
 
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span className="text-gray-500 italic">Tidak ada file</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+
+                </div>
             </div>
         </div>
     );

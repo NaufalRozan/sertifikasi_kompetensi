@@ -22,4 +22,17 @@ export interface Program {
     endDate: string;
     createdAt: string;
     updatedAt: string;
+    Event: Event[];
+}
+
+export interface Event {
+    id: string;
+    programId: string;
+    jenisEventId: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    harga: number;
+    tempat: string;
+    description: string;
 }
