@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { toast } from "sonner";
 import axios from "axios";
 import {
     CalendarDays,
@@ -9,6 +10,8 @@ import {
     Users,
     UserCog,
     Calendar,
+    Trash2,
+    Pencil,
 } from "lucide-react";
 import {
     Card,
@@ -16,6 +19,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { BASE_URL } from "@/constant/BaseURL";
 
 
@@ -28,6 +43,14 @@ export default function SubProgramView() {
     const [notulensiData, setNotulensiData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const jenisEventMap: Record<string, string> = {
+        "1": "Tes Jenis",
+        "2": "Workshop",
+        "3": "Kompetisi",
+        "4": "Pelatihan",
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,6 +72,25 @@ export default function SubProgramView() {
 
         fetchData();
     }, [programId]);
+
+    const handleDeleteEvent = async (eventId: string) => {
+        if (!confirm("Yakin ingin menghapus event ini?")) return;
+
+        try {
+            await axios.delete(`${BASE_URL}/events/${eventId}`, {
+                withCredentials: true,
+            });
+
+            toast.success("Event berhasil dihapus!");
+
+            // refresh data setelah hapus
+            setEventData((prev) => prev.filter((e: any) => e.id !== eventId));
+        } catch (err) {
+            console.error(err);
+            toast.error("Gagal menghapus event.");
+        }
+    };
+
 
     const topRow = [
         {
@@ -158,9 +200,12 @@ export default function SubProgramView() {
                                 <tr>
                                     <th className="p-4">Nama</th>
                                     <th className="p-4">Periode</th>
+                                    <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Jenis</th>
                                     <th className="p-4">Harga</th>
                                     <th className="p-4">Tempat</th>
+                                    <th className="p-4 text-right">Aksi</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,8 +217,50 @@ export default function SubProgramView() {
                                             {new Date(item.endDate).toLocaleDateString("id-ID")}
                                         </td>
                                         <td className="p-4">{item.description}</td>
+                                        <td className="p-4">{jenisEventMap[item.jenisEventId] || "Tidak diketahui"}</td>
+
                                         <td className="p-4">Rp{item.harga.toLocaleString()}</td>
                                         <td className="p-4">{item.tempat}</td>
+                                        <td className="p-4 flex gap-2 justify-end">
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                onClick={() => router.push(`/program/${programId}/event/edit/${item.id}`)}
+                                                className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
+                                            >
+                                                <Pencil className="w-4 h-4" />
+                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="bg-red-100 hover:bg-red-200 text-red-600"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Hapus Event</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Apakah kamu yakin ingin menghapus event ini? Tindakan ini tidak dapat dibatalkan.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDeleteEvent(item.id)}
+                                                            className="bg-red-600 hover:bg-red-700 text-white"
+                                                        >
+                                                            Hapus
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+
+                                        </td>
+
                                     </tr>
                                 ))}
                             </tbody>

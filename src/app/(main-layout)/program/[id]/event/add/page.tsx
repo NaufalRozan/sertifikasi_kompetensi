@@ -28,9 +28,6 @@ import { BASE_URL } from "@/constant/BaseURL";
 
 const jenisEventMap: Record<string, number> = {
     "Tes Jenis": 1,
-    "Workshop": 2,
-    "Kompetisi": 3,
-    "Pelatihan": 4,
 };
 
 const jenisOptions = Object.keys(jenisEventMap) as [string, ...string[]];
