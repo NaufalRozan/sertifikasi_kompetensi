@@ -32,19 +32,16 @@ export default function SubProgramView() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [eventRes, notulensiRes] = await Promise.all([
-                    axios.get(`${BASE_URL}/events/?program_id=${programId}`, {
-                        withCredentials: true,
-                    }),
-                    axios.get(`${BASE_URL}/notulensi/?program_id=${programId}`, {
-                        withCredentials: true,
-                    }),
-                ]);
-                setEventData(eventRes.data.data);
-                setNotulensiData(notulensiRes.data.data);
+                const response = await axios.get(`${BASE_URL}/programs/${programId}`, {
+                    withCredentials: true,
+                });
+
+                const program = response.data.data;
+                setEventData(program.Event || []);
+                setNotulensiData(program.Notulensi || []);
             } catch (err) {
                 console.error(err);
-                setError("Gagal memuat data.");
+                setError("Gagal memuat data program.");
             } finally {
                 setLoading(false);
             }
@@ -153,38 +150,43 @@ export default function SubProgramView() {
                 {/* Tabel Event */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
                     <h2 className="text-xl font-semibold mb-4 text-red-700 px-4 pt-4">Daftar Event</h2>
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-red-700 font-semibold border-b">
-                            <tr>
-                                <th className="p-4">Nama</th>
-                                <th className="p-4">Periode</th>
-                                <th className="p-4">Jenis</th>
-                                <th className="p-4">Harga</th>
-                                <th className="p-4">Tempat</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {eventData.map((item: any, idx) => (
-                                <tr key={idx} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{item.name}</td>
-                                    <td className="p-4">
-                                        {new Date(item.startDate).toLocaleDateString("id-ID")} -{" "}
-                                        {new Date(item.endDate).toLocaleDateString("id-ID")}
-                                    </td>
-                                    <td className="p-4">{item.description}</td>
-                                    <td className="p-4">Rp{item.harga.toLocaleString()}</td>
-                                    <td className="p-4">{item.tempat}</td>
+                    {eventData.length === 0 ? (
+                        <p className="px-4 pb-4 text-gray-600 italic">Belum ada event yang ditambahkan.</p>
+                    ) : (
+                        <table className="w-full text-sm text-left">
+                            <thead className="text-red-700 font-semibold border-b">
+                                <tr>
+                                    <th className="p-4">Nama</th>
+                                    <th className="p-4">Periode</th>
+                                    <th className="p-4">Jenis</th>
+                                    <th className="p-4">Harga</th>
+                                    <th className="p-4">Tempat</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {eventData.map((item: any, idx) => (
+                                    <tr key={idx} className="border-b hover:bg-gray-50">
+                                        <td className="p-4">{item.name}</td>
+                                        <td className="p-4">
+                                            {new Date(item.startDate).toLocaleDateString("id-ID")} -{" "}
+                                            {new Date(item.endDate).toLocaleDateString("id-ID")}
+                                        </td>
+                                        <td className="p-4">{item.description}</td>
+                                        <td className="p-4">Rp{item.harga.toLocaleString()}</td>
+                                        <td className="p-4">{item.tempat}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
+
 
                 {/* Tabel Notulensi */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto mt-8">
                     <h2 className="text-xl font-semibold mb-4 text-red-700 px-4 pt-4">Daftar Notulensi</h2>
                     {notulensiData.length === 0 ? (
-                        <p className="px-4 pb-4 text-gray-600">Belum ada notulensi.</p>
+                        <p className="px-4 pb-4 text-gray-600 italic">Belum ada notulensi.</p>
                     ) : (
                         <table className="w-full text-sm text-left">
                             <thead className="text-red-700 font-semibold border-b">
