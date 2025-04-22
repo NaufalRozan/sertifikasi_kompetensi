@@ -72,29 +72,31 @@ export function Menu({ isOpen }: MenuProps) {
     e.preventDefault();
 
     try {
-      toast.promise(
-        axios.delete(
-          `${BASE_URL}/auth/logout`,
-          {
-            withCredentials: true
-          }
-        ),
+      toast.loading("Logging out...");
+
+      await axios.post(
+        `http://localhost:5000/auth/logout`,
+        {},
         {
-          loading: 'Logging out...',
-          success: async (response) => {
-            dispatch(
-              resetUser()
-            )
-            router.push('/auth');
-            return 'Logged out successfully';
-          },
-          error: 'Error logging out'
+          withCredentials: true,
         }
-      )
-    } catch (e) {
-      console.error(e);
+      );
+
+      dispatch(resetUser());
+
+      toast.success("Logged out successfully");
+
+      // Tunggu sejenak sebelum redirect agar toast muncul
+      setTimeout(() => {
+        router.push("/auth");
+      }, 300);
+    } catch (err) {
+      console.error("Logout error:", err);
+      toast.error("Error logging out. Please try again.");
     }
-  }
+  };
+
+
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">

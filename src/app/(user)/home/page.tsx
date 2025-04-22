@@ -74,14 +74,25 @@ export default function HomePage() {
     fetchEvents();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    document.cookie =
-      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    setUser(null);
-    toast.success("Berhasil logout!");
-    router.refresh();
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `http://localhost:5000/auth/logout`,
+        {},
+        {
+          withCredentials: true, // penting agar cookie terkirim
+        }
+      );
+
+      setUser(null);
+      toast.success("Berhasil logout!");
+      router.refresh();
+    } catch (err) {
+      console.error("Logout gagal:", err);
+      toast.error("Gagal logout. Silakan coba lagi.");
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">

@@ -88,26 +88,25 @@ const AuthPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            let status = 0
             try {
-
-                const response = await axios.get(`${BASE_URL}/users`, {
+                const response = await axios.get(`${BASE_URL}/users/access-token`, {
                     withCredentials: true
-                })
+                });
 
-                status = response.status
-                if (status === 200) {
+                // Validasi bahwa data user benar-benar ada
+                if (response.status === 200 && response.data?.data?.id) {
                     toast.info('You are already logged in');
                     router.push('/dashboard');
                 }
-                return status;
             } catch (error) {
-                return error;
+                // Silent fail, user belum login
+                console.log("Not logged in", error);
             }
         };
 
         fetchData();
     }, [router]);
+
     return (
         <section className="min-h-screen flex items-center justify-center bg-slate-50">
             <div className="bg-white flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
