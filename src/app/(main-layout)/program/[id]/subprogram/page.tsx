@@ -46,9 +46,6 @@ export default function SubProgramView() {
 
     const jenisEventMap: Record<string, string> = {
         "1": "Tes Jenis",
-        "2": "Workshop",
-        "3": "Kompetisi",
-        "4": "Pelatihan",
     };
 
 
@@ -90,6 +87,27 @@ export default function SubProgramView() {
             toast.error("Gagal menghapus event.");
         }
     };
+
+    const handleDeleteNotulensi = async (notulensiId: string) => {
+        try {
+            await toast.promise(
+                axios.delete(`${BASE_URL}/notulensi/${notulensiId}`, {
+                    withCredentials: true,
+                }),
+                {
+                    loading: "Menghapus notulensi...",
+                    success: "Notulensi berhasil dihapus!",
+                    error: "Gagal menghapus notulensi.",
+                }
+            );
+
+            // update data setelah dihapus
+            setNotulensiData((prev) => prev.filter((n: any) => n.id !== notulensiId));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
 
 
     const topRow = [
@@ -281,6 +299,7 @@ export default function SubProgramView() {
                                     <th className="p-4">Topik</th>
                                     <th className="p-4">Tanggal</th>
                                     <th className="p-4">File</th>
+                                    <th className="p-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -306,16 +325,55 @@ export default function SubProgramView() {
                                                         >
                                                             📄 {file.originalName || file.filename}
                                                         </a>
-
                                                     </div>
                                                 ))
                                             ) : (
                                                 <span className="text-gray-500 italic">Tidak ada file</span>
                                             )}
                                         </td>
+                                        <td className="p-4 flex justify-end gap-2">
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                onClick={() => router.push(`/program/${programId}/notulensi/edit/${item.id}`)}
+                                                className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
+                                            >
+                                                <Pencil className="w-4 h-4" />
+                                            </Button>
+
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="bg-red-100 hover:bg-red-200 text-red-600"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Hapus Notulensi</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Apakah kamu yakin ingin menghapus notulensi ini? Tindakan ini tidak dapat dibatalkan.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDeleteNotulensi(item.id)}
+                                                            className="bg-red-600 hover:bg-red-700 text-white"
+                                                        >
+                                                            Hapus
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
+
                         </table>
                     )}
 
