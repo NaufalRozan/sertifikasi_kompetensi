@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function OAuthCallbackPage() {
     const router = useRouter();
@@ -9,11 +9,14 @@ export default function OAuthCallbackPage() {
 
     useEffect(() => {
         const token = searchParams.get("token");
-        if (token) {
-            localStorage.setItem("token", token); // atau bisa simpan cookie
-            router.push("/"); // redirect ke home / dashboard
+        const user = searchParams.get("user");
+
+        if (token && user) {
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", user); // ⬅️ Simpan user ke localStorage
+            router.push("/");
         }
-    }, [router, searchParams]);
+    }, [searchParams, router]);
 
     return (
         <div className="min-h-screen flex items-center justify-center">

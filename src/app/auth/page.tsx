@@ -38,7 +38,7 @@ const AuthPage = () => {
         try {
             toast.promise(
                 axios.post(
-                    `${BASE_URL}/auth/login`,
+                    `http://localhost:5000/auth/login`,
                     {
                         username: email,
                         password: password
@@ -49,9 +49,25 @@ const AuthPage = () => {
                 ),
                 {
                     loading: 'Logging in...',
-                    success: async (response) => {
-                        router.push('/dashboard');
-                        return 'Logged in successfully';
+                    success: async () => {
+                        // Tunggu backend nyimpan cookie di browser
+                        await new Promise((res) => setTimeout(res, 500));
+
+                        try {
+                            const check = await axios.get(`${BASE_URL}/users`, {
+                                withCredentials: true,
+                            });
+
+                            if (check.status === 200) {
+                                router.push("/dashboard");
+                                return "Login berhasil!";
+                            } else {
+                                return "Login berhasil, tetapi gagal mengambil data pengguna.";
+                            }
+                        } catch (error) {
+                            console.error("Session check failed", error);
+                            return "Login berhasil, tapi tidak bisa memverifikasi sesi.";
+                        }
                     },
                     error: 'Error logging in'
                 })
