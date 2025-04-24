@@ -38,7 +38,7 @@ const AuthPage = () => {
         try {
             toast.promise(
                 axios.post(
-                    `http://localhost:5000/auth/login`,
+                    `${process.env.NEXT_PUBLIC_DOMAIN}/auth/login`,
                     {
                         username: email,
                         password: password

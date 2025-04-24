@@ -19,7 +19,7 @@ export default function LoginPage() {
     }, [router]);
 
     const handleGoogleLogin = () => {
-        window.location.href = `http://localhost:5000/oauth2/google`;
+        window.location.href = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth2/google`;
     };
 
     return (
