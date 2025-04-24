@@ -77,7 +77,7 @@ export default function HomePage() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        `http://localhost:5000/auth/logout`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/auth/logout`,
         {},
         {
           withCredentials: true, // penting agar cookie terkirim

@@ -75,7 +75,7 @@ export function Menu({ isOpen }: MenuProps) {
       toast.loading("Logging out...");
 
       await axios.post(
-        `http://localhost:5000/auth/logout`,
+        `${process.env.NEXT_PUBLIC_DOMAIN}/auth/logout`,
         {},
         {
           withCredentials: true,
