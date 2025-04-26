@@ -15,50 +15,58 @@ export default function OtoritasKeuanganPage() {
             tanggal: "20 April 2025",
             deskripsi: "Pembelian peralatan Lab",
             nominal: 10500000,
-            approval: "Diterima",
+            approval1: "Diterima",
+            approval2: "Diterima",
         },
         {
             no: 2,
             tanggal: "11 Maret 2025",
             deskripsi: "Perawatan Mesin",
             nominal: 5000000,
-            approval: "Ditolak",
+            approval1: "Ditolak",
+            approval2: "Diterima",
         },
         {
             no: 3,
             tanggal: "12 Juni 2025",
             deskripsi: "Biaya Registrasi Lomba",
             nominal: 1800000,
-            approval: "Diterima",
+            approval1: "Diterima",
+            approval2: "Ditolak",
         },
         {
             no: 4,
             tanggal: "12 Juni 2025",
             deskripsi: "Universitas Muhammadiyah Yogyakarta",
             nominal: 5800000,
-            approval: "Diterima",
+            approval1: "Diterima",
+            approval2: "Diterima",
         },
         {
             no: 5,
             tanggal: "12 Juni 2025",
             deskripsi: "Pengadaan Suku Cadang",
             nominal: 3500000,
-            approval: "Diterima",
+            approval1: "Diterima",
+            approval2: "Diterima",
         },
         {
             no: 6,
             tanggal: "12 Juni 2025",
             deskripsi: "Pengadaan Material Praktikum",
             nominal: 4000000,
-            approval: "Diterima",
+            approval1: "Ditolak",
+            approval2: "Ditolak",
         },
     ]);
 
-    const handleApprovalChange = (index: number, value: string) => {
+
+    const handleApprovalChange = (index: number, field: "approval1" | "approval2", value: string) => {
         const newData = [...data];
-        newData[index].approval = value;
+        newData[index][field] = value;
         setData(newData);
     };
+
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -94,7 +102,8 @@ export default function OtoritasKeuanganPage() {
                                     <th className="p-4">Tanggal</th>
                                     <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Nominal</th>
-                                    <th className="p-4">Approval</th>
+                                    <th className="p-4">Approval Pengurus 1</th>
+                                    <th className="p-4">Approval Pengurus 2</th>
                                     <th className="p-4">Receipt</th>
                                     <th className="p-4">Aksi</th>
                                 </tr>
@@ -108,8 +117,18 @@ export default function OtoritasKeuanganPage() {
                                         <td className="p-4">Rp {item.nominal.toLocaleString()}</td>
                                         <td className="p-4">
                                             <select
-                                                value={item.approval}
-                                                onChange={(e) => handleApprovalChange(i, e.target.value)}
+                                                value={item.approval1}
+                                                onChange={(e) => handleApprovalChange(i, "approval1", e.target.value)}
+                                                className="border border-gray-300 rounded px-2 py-1 text-sm"
+                                            >
+                                                <option value="Diterima">Diterima</option>
+                                                <option value="Ditolak">Ditolak</option>
+                                            </select>
+                                        </td>
+                                        <td className="p-4">
+                                            <select
+                                                value={item.approval2}
+                                                onChange={(e) => handleApprovalChange(i, "approval2", e.target.value)}
                                                 className="border border-gray-300 rounded px-2 py-1 text-sm"
                                             >
                                                 <option value="Diterima">Diterima</option>
