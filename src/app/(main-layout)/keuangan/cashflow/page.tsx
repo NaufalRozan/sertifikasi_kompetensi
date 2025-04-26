@@ -21,6 +21,8 @@ import {
 export default function TransaksiSemuaPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedJenis, setSelectedJenis] = useState("Semua");
+    const [selectedBulan, setSelectedBulan] = useState("Semua");
+
 
     const transaksiMasuk = [
         {
@@ -66,9 +68,22 @@ export default function TransaksiSemuaPage() {
             item.keterangan.toLowerCase().includes(searchQuery.toLowerCase());
         const cocokJenis =
             selectedJenis === "Semua" || item.jenis === selectedJenis;
+        const cocokBulan =
+            selectedBulan === "Semua" ||
+            new Date(item.tanggal).getMonth() + 1 === parseInt(selectedBulan);
 
-        return cocokSearch && cocokJenis;
+        return cocokSearch && cocokJenis && cocokBulan;
     });
+    const totalMasuk = filteredData
+        .filter((item) => item.jenis === "Masuk")
+        .reduce((sum, item) => sum + item.nominal, 0);
+
+    const totalKeluar = filteredData
+        .filter((item) => item.jenis === "Keluar")
+        .reduce((sum, item) => sum + item.nominal, 0);
+
+    const totalSaldo = totalMasuk - totalKeluar;
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -84,18 +99,29 @@ export default function TransaksiSemuaPage() {
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10 space-y-6">
                 {/* Filter dan Search */}
                 <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-2 text-sm w-full lg:w-auto">
-                        <Select value={selectedJenis} onValueChange={setSelectedJenis}>
+                    <div className="flex items-center gap-2 text-sm flex-wrap w-full lg:w-auto">
+                        <Select value={selectedBulan} onValueChange={setSelectedBulan}>
                             <SelectTrigger className="w-[160px] bg-white text-black">
-                                <SelectValue placeholder="Jenis Transaksi" />
+                                <SelectValue placeholder="Bulan" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Semua">Semua</SelectItem>
-                                <SelectItem value="Masuk">Masuk</SelectItem>
-                                <SelectItem value="Keluar">Keluar</SelectItem>
+                                <SelectItem value="01">Januari</SelectItem>
+                                <SelectItem value="02">Februari</SelectItem>
+                                <SelectItem value="03">Maret</SelectItem>
+                                <SelectItem value="04">April</SelectItem>
+                                <SelectItem value="05">Mei</SelectItem>
+                                <SelectItem value="06">Juni</SelectItem>
+                                <SelectItem value="07">Juli</SelectItem>
+                                <SelectItem value="08">Agustus</SelectItem>
+                                <SelectItem value="09">September</SelectItem>
+                                <SelectItem value="10">Oktober</SelectItem>
+                                <SelectItem value="11">November</SelectItem>
+                                <SelectItem value="12">Desember</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
+
 
                     <Input
                         type="text"
@@ -119,11 +145,12 @@ export default function TransaksiSemuaPage() {
                                     <th className="p-4">Tanggal</th>
                                     <th className="p-4">Jenis</th>
                                     <th className="p-4">Pihak Terkait</th>
-                                    <th className="p-4">Nominal</th>
                                     <th className="p-4">Keterangan</th>
+                                    <th className="p-4">Nominal</th>
                                 </tr>
                             </thead>
                             <tbody>
+
                                 {filteredData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
@@ -139,11 +166,26 @@ export default function TransaksiSemuaPage() {
                                             </span>
                                         </td>
                                         <td className="p-4">{item.pihak}</td>
-                                        <td className="p-4">Rp {item.nominal.toLocaleString()}</td>
                                         <td className="p-4">{item.keterangan}</td>
+                                        <td className="p-4">Rp {item.nominal.toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
+                            <tfoot>
+                                <tr className="bg-gray-100 font-semibold text-sm">
+                                    <td className="p-4 text-center" colSpan={5}>
+                                        Total Bulan Ini
+                                    </td>
+                                    <td className="p-4">
+
+                                        <div className={`font-bold ${totalSaldo >= 0 ? "text-green-700" : "text-red-700"}`}>
+                                            = Rp {totalSaldo.toLocaleString()}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+
+
                         </table>
                     </CardContent>
                 </Card>
