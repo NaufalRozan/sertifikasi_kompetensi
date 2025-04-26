@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function AdminMenuPage() {
+export default function OtoritasKeuanganPage() {
     const router = useRouter();
     const [data, setData] = useState([
         {
@@ -76,7 +76,7 @@ export default function AdminMenuPage() {
 
             {/* Content */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative space-y-4 px-4 pb-10">
-                <h2 className="text-lg font-semibold text-white">Admin Menu</h2>
+                <h2 className="text-lg font-semibold text-white">Otoritas Keuangan</h2>
                 <Input
                     type="text"
                     placeholder="Cari..."

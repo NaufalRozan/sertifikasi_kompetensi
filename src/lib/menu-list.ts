@@ -89,8 +89,8 @@ export function getMenuList(pathname: string): Group[] {
               href: "/hrd/manajemen-pengurus",
             },
             {
-              label: "Manajemen Struktur",
-              href: "/hrd/manajemen-struktur",
+              label: "Manajemen Instruktur",
+              href: "/hrd/manajemen-instruktur",
             },
             {
               label: "Manajemen Asessor",
@@ -152,8 +152,8 @@ export function getMenuList(pathname: string): Group[] {
               href: "/keuangan/cashflow",
             },
             {
-              label: "Admin Menu",
-              href: "/keuangan/admin",
+              label: "Otoritas Keuangan",
+              href: "/keuangan/otoritas-keuangan",
             },
           ],
         },

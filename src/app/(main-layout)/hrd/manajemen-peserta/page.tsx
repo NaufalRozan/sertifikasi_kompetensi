@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner"; // kalau belum pakai sonner, boleh diganti alert biasa
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,78 +14,13 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { BASE_URL } from "@/constant/BaseURL"; // pastikan ini ada di project kamu
 
 export default function ManajemenPesertaPage() {
   const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
-
-  const data = [
-    {
-      nim: "20220140177",
-      nama: "Rudi Saputra",
-      email: "rudi@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "K3 Mekanik",
-      status: "Lulus",
-      pdf: true,
-      notifikasi: "Terkirim",
-      saldo: 250000,
-    },
-    {
-      nim: "20220140011",
-      nama: "Bayu Pratama",
-      email: "bayu@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "K3 Mekanik",
-      status: "-",
-      pdf: false,
-      notifikasi: "Belum",
-      saldo: 150000,
-    },
-    {
-      nim: "20220140122",
-      nama: "Siti Rahayu",
-      email: "siti@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "K3 Umum",
-      status: "Selesai",
-      pdf: true,
-      notifikasi: "Terkirim",
-      saldo: 350000,
-    },
-    {
-      nim: "20220140133",
-      nama: "Dimas Prasetyo",
-      email: "dimas@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "K3 Engineering",
-      status: "Selesai",
-      pdf: true,
-      notifikasi: "Terkirim",
-      saldo: 275000,
-    },
-    {
-      nim: "20220140144",
-      nama: "Fajar Maulana",
-      email: "fajar@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "NDT Level II",
-      status: "Selesai",
-      pdf: true,
-      notifikasi: "Terkirim",
-      saldo: 0,
-    },
-    {
-      nim: "20220140155",
-      nama: "Nita Kurniawan",
-      email: "nita@gmail.com",
-      whatsapp: "081338283838",
-      sertifikasi: "Welding Inspector (CWI)",
-      status: "-",
-      pdf: false,
-      notifikasi: "Belum",
-      saldo: 100000,
-    },
-  ];
+  const [data, setData] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const sertifikasiOptions = [
     "Semua",
@@ -93,6 +30,24 @@ export default function ManajemenPesertaPage() {
     "NDT Level II",
     "Welding Inspector (CWI)",
   ];
+
+  useEffect(() => {
+    const fetchPeserta = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/peserta/`, {
+          withCredentials: true,
+        });
+        setData(res.data.data || []);
+      } catch (error) {
+        console.error(error);
+        toast.error("Gagal memuat data peserta.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPeserta();
+  }, []);
 
   const getBadgeStyle = (value: string) => {
     switch (value) {
@@ -118,8 +73,6 @@ export default function ManajemenPesertaPage() {
     selectedSertifikasi === "Semua"
       ? data
       : data.filter((item) => item.sertifikasi === selectedSertifikasi);
-
-  const [searchQuery, setSearchQuery] = useState("");
 
   const searchedData = filteredData.filter(
     (item) =>
@@ -181,57 +134,60 @@ export default function ManajemenPesertaPage() {
 
         {/* Tabel */}
         <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-red-700 font-semibold border-b">
-              <tr>
-                <th className="p-4">NIM</th>
-                <th className="p-4">Nama</th>
-                <th className="p-4">Email</th>
-                <th className="p-4">Whatsapp</th>
-                <th className="p-4">Sertifikasi Terdaftar</th>
-                <th className="p-4">Saldo</th>
-
-                <th className="p-4">Status</th>
-                <th className="p-4">PDF Sertifikat</th>
-                <th className="p-4">Notifikasi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {searchedData.map((item, idx) => (
-                <tr key={idx} className="border-b hover:bg-gray-50">
-                  <td className="p-4">{item.nim}</td>
-                  <td className="p-4">{item.nama}</td>
-                  <td className="p-4">{item.email}</td>
-                  <td className="p-4">{item.whatsapp}</td>
-                  <td className="p-4">{item.sertifikasi}</td>
-                  <td className="p-4">{formatRupiah(item.saldo)}</td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
-                    >
-                      {item.status}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    {item.pdf ? (
-                      <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">
-                        PDF
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
-                    >
-                      {item.notifikasi}
-                    </span>
-                  </td>
+          {loading ? (
+            <p className="text-center py-8 text-gray-500">Memuat data peserta...</p>
+          ) : (
+            <table className="w-full text-sm text-left">
+              <thead className="text-red-700 font-semibold border-b">
+                <tr>
+                  <th className="p-4">NIM</th>
+                  <th className="p-4">Nama</th>
+                  <th className="p-4">Email</th>
+                  <th className="p-4">Whatsapp</th>
+                  <th className="p-4">Sertifikasi Terdaftar</th>
+                  <th className="p-4">Saldo</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4">PDF Sertifikat</th>
+                  <th className="p-4">Notifikasi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {searchedData.map((item, idx) => (
+                  <tr key={idx} className="border-b hover:bg-gray-50">
+                    <td className="p-4">{item.nim}</td>
+                    <td className="p-4">{item.nama}</td>
+                    <td className="p-4">{item.email}</td>
+                    <td className="p-4">{item.whatsapp}</td>
+                    <td className="p-4">{item.sertifikasi}</td>
+                    <td className="p-4">{formatRupiah(item.saldo)}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {item.pdf ? (
+                        <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">
+                          PDF
+                        </span>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
+                      >
+                        {item.notifikasi}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
           {/* Pagination */}
           <div className="flex justify-center items-center gap-2 py-4">
