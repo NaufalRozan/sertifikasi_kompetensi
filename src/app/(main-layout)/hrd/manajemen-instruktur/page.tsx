@@ -28,6 +28,7 @@ export default function ManajemenInstrukturPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "45.678.123.9-001.000",
+            namaBank: "Bank BCA",
             rekening: "9988776655",
         },
         {
@@ -41,6 +42,7 @@ export default function ManajemenInstrukturPage() {
             status: "Nonaktif",
             notifikasi: "Belum",
             npwp: "55.999.888.1-002.000",
+            namaBank: "Bank BRI",
             rekening: "8877665544",
         },
         {
@@ -54,6 +56,7 @@ export default function ManajemenInstrukturPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "11.222.333.4-567.000",
+            namaBank: "Bank BNI",
             rekening: "7766554433",
         },
     ];
@@ -155,6 +158,7 @@ export default function ManajemenInstrukturPage() {
                                 <th className="p-4">Unit</th>
                                 <th className="p-4">Sertifikasi</th>
                                 <th className="p-4">NPWP</th>
+                                <th className="p-4">Nama Bank</th>
                                 <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
@@ -171,6 +175,7 @@ export default function ManajemenInstrukturPage() {
                                     <td className="p-4">{item.unit}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
                                     <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.namaBank}</td>
                                     <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span

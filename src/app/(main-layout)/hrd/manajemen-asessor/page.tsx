@@ -26,6 +26,7 @@ export default function ManajemenAsessorPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "33.444.555.6-789.000",
+            namaBank: "Bank Mandiri",
             rekening: "5544332211",
         },
         {
@@ -37,6 +38,7 @@ export default function ManajemenAsessorPage() {
             status: "Nonaktif",
             notifikasi: "Belum",
             npwp: "88.999.111.2-345.000",
+            namaBank: "Bank BCA",
             rekening: "6677889900",
         },
         {
@@ -48,6 +50,7 @@ export default function ManajemenAsessorPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "77.888.222.1-654.000",
+            namaBank: "Bank BCA",
             rekening: "4433221100",
         },
     ];
@@ -147,6 +150,7 @@ export default function ManajemenAsessorPage() {
                                 <th className="p-4">Whatsapp</th>
                                 <th className="p-4">Sertifikasi</th>
                                 <th className="p-4">NPWP</th>
+                                <th className="p-4">Nama Bank</th>
                                 <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
@@ -161,6 +165,7 @@ export default function ManajemenAsessorPage() {
                                     <td className="p-4">{item.whatsapp}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
                                     <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.namaBank}</td>
                                     <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span

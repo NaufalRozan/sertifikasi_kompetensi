@@ -26,6 +26,7 @@ export default function ManajemenTrainerPage() {
       status: "Aktif",
       notifikasi: "Terkirim",
       npwp: "12.345.678.9-123.000",
+      namaBank: "Bank Mandiri",
       rekening: "1234567890",
     },
     {
@@ -37,6 +38,7 @@ export default function ManajemenTrainerPage() {
       status: "Nonaktif",
       notifikasi: "Belum",
       npwp: "99.888.777.6-543.000",
+      namaBank: "BCA",
       rekening: "0987654321",
     },
   ];
@@ -132,6 +134,7 @@ export default function ManajemenTrainerPage() {
                 <th className="p-4">Whatsapp</th>
                 <th className="p-4">Sertifikasi</th>
                 <th className="p-4">NPWP</th>
+                <th className="p-4">Nama Bank</th>
                 <th className="p-4">No. Rekening</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Notifikasi</th>
@@ -146,6 +149,7 @@ export default function ManajemenTrainerPage() {
                   <td className="p-4">{item.whatsapp}</td>
                   <td className="p-4">{item.sertifikasi}</td>
                   <td className="p-4">{item.npwp}</td>
+                  <td className="p-4">{item.namaBank}</td>
                   <td className="p-4">{item.rekening}</td>
                   <td className="p-4">
                     <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>

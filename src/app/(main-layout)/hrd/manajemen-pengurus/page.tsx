@@ -28,6 +28,7 @@ export default function ManajemenPengurusPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "12.111.222.3-444.000",
+            namaBank: "Bank BRI",
             rekening: "1122334455",
         },
         {
@@ -41,6 +42,7 @@ export default function ManajemenPengurusPage() {
             status: "Nonaktif",
             notifikasi: "Belum",
             npwp: "44.555.666.7-888.000",
+            namaBank: "Bank BNI",
             rekening: "2233445566",
         },
         {
@@ -54,6 +56,7 @@ export default function ManajemenPengurusPage() {
             status: "Aktif",
             notifikasi: "Terkirim",
             npwp: "77.888.999.0-111.000",
+            namaBank: "Bank Mandiri",
             rekening: "3344556677",
         },
     ];
@@ -155,6 +158,7 @@ export default function ManajemenPengurusPage() {
                                 <th className="p-4">Unit</th>
                                 <th className="p-4">Sertifikasi</th>
                                 <th className="p-4">NPWP</th>
+                                <th className="p-4">Nama Bank</th>
                                 <th className="p-4">No. Rekening</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Notifikasi</th>
@@ -171,6 +175,7 @@ export default function ManajemenPengurusPage() {
                                     <td className="p-4">{item.unit}</td>
                                     <td className="p-4">{item.sertifikasi}</td>
                                     <td className="p-4">{item.npwp}</td>
+                                    <td className="p-4">{item.namaBank}</td>
                                     <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>
