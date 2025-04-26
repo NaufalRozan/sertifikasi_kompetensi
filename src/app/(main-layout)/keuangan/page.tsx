@@ -123,15 +123,6 @@ export default function ManajemenKeuanganPage() {
     const saldoPeriode = totalMasukPeriode - totalKeluarPeriode;
     const statusPeriode = saldoPeriode >= 0 ? "Keuntungan" : "Kerugian";
 
-    const chartData = [
-        { bulan: "Jan", masuk: 10_000_000, keluar: 6_000_000 },
-        { bulan: "Feb", masuk: 12_000_000, keluar: 8_000_000 },
-        { bulan: "Mar", masuk: 15_000_000, keluar: 9_000_000 },
-        { bulan: "Apr", masuk: 25_000_000, keluar: 5_000_000 },
-        { bulan: "Mei", masuk: 18_000_000, keluar: 7_000_000 },
-        { bulan: "Jun", masuk: 22_000_000, keluar: 10_000_000 },
-    ];
-
     const chartConfig = {
         masuk: {
             label: "Pemasukan",
@@ -142,6 +133,98 @@ export default function ManajemenKeuanganPage() {
             color: "#EF4444",
         },
     } satisfies ChartConfig;
+
+    const generateChartData = () => {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+
+        if (periode === "Bulan") {
+            // Siapkan label bulan tetap
+            const months = [
+                "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+            ];
+
+            // Inisialisasi data kosong
+            const data = months.map((bulan) => ({
+                label: bulan,
+                masuk: 0,
+                keluar: 0,
+            }));
+
+            // Isi data berdasarkan transaksi
+            transaksi.forEach((t) => {
+                const date = new Date(t.tanggal);
+                if (date.getFullYear() === currentYear) {
+                    const index = date.getMonth();
+                    if (t.jenis === "Masuk") {
+                        data[index].masuk += t.nominal;
+                    } else {
+                        data[index].keluar += t.nominal;
+                    }
+                }
+            });
+
+            return data;
+
+        } else if (periode === "6 Bulan") {
+            const semesters = [
+                { label: "Semester Ganjil", months: [0, 1, 2, 3, 4, 5] },
+                { label: "Semester Genap", months: [6, 7, 8, 9, 10, 11] },
+            ];
+
+            const data = semesters.map((s) => ({
+                label: s.label,
+                masuk: 0,
+                keluar: 0,
+            }));
+
+            transaksi.forEach((t) => {
+                const date = new Date(t.tanggal);
+                if (date.getFullYear() === currentYear) {
+                    const semesterIndex = date.getMonth() < 6 ? 0 : 1;
+                    if (t.jenis === "Masuk") {
+                        data[semesterIndex].masuk += t.nominal;
+                    } else {
+                        data[semesterIndex].keluar += t.nominal;
+                    }
+                }
+            });
+
+            return data;
+
+        } else if (periode === "Tahun") {
+            const startYear = 2020;
+            const endYear = currentYear;
+            const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+
+            const data = years.map((year) => ({
+                label: year.toString(),
+                masuk: 0,
+                keluar: 0,
+            }));
+
+            transaksi.forEach((t) => {
+                const date = new Date(t.tanggal);
+                const yearIndex = date.getFullYear() - startYear;
+                if (yearIndex >= 0 && yearIndex < data.length) {
+                    if (t.jenis === "Masuk") {
+                        data[yearIndex].masuk += t.nominal;
+                    } else {
+                        data[yearIndex].keluar += t.nominal;
+                    }
+                }
+            });
+
+            return data;
+        }
+
+        return [];
+    };
+
+
+    const chartData = generateChartData();
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -243,11 +326,12 @@ export default function ManajemenKeuanganPage() {
                             <BarChart data={chartData}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis
-                                    dataKey="bulan"
+                                    dataKey="label"
                                     tickLine={false}
                                     axisLine={false}
                                     tickMargin={10}
                                 />
+
                                 <YAxis
                                     tickFormatter={(value) => `Rp ${value / 1_000_000}jt`}
                                     tickLine={false}
@@ -258,7 +342,6 @@ export default function ManajemenKeuanganPage() {
                                 <Bar dataKey="masuk" fill="#3B82F6" radius={4} />
                                 <Bar dataKey="keluar" fill="#EF4444" radius={4} />
                             </BarChart>
-
                         </ChartContainer>
 
                     </CardContent>
