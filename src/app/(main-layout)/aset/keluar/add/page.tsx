@@ -11,12 +11,13 @@ export default function AddAsetKeluarPage() {
     const [nama, setNama] = useState("");
     const [tanggal, setTanggal] = useState("");
     const [distributor, setDistributor] = useState("");
+    const [deskripsi, setDeskripsi] = useState("");
     const [stok, setStok] = useState(0);
     const [satuan, setSatuan] = useState("");
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const data = { nama, tanggal, distributor, stok, satuan };
+        const data = { nama, tanggal, distributor, deskripsi, stok, satuan };
         console.log("Aset Keluar Ditambahkan:", data);
         alert("Aset keluar berhasil ditambahkan!");
         // TODO: Kirim ke API/backend
@@ -63,6 +64,15 @@ export default function AddAsetKeluarPage() {
                                 <Label>Distributor</Label>
                                 <Input
                                     value={distributor}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setDistributor(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Deskripsi</Label>
+                                <Input
+                                    value={deskripsi}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => setDistributor(e.target.value)}
                                     required
                                 />

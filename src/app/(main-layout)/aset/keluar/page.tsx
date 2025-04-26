@@ -24,6 +24,7 @@ export default function AsetKeluarPage() {
             nama: "Mesin Bubut",
             tanggal: "20 April 2025",
             distributor: "PT. Mesin Jaya",
+            deskripsi: "Mesin bubut CNC untuk pemesinan presisi.",
             stok: 2,
             satuan: "Unit",
         },
@@ -32,6 +33,7 @@ export default function AsetKeluarPage() {
             nama: "Oli Hidrolik",
             tanggal: "09 April 2025",
             distributor: "PT. Fluida Mesin",
+            deskripsi: "Oli hidrolik untuk mesin industri.",
             stok: 30,
             satuan: "Liter",
         },
@@ -40,6 +42,7 @@ export default function AsetKeluarPage() {
             nama: "Baut & Mur",
             tanggal: "29 April 2025",
             distributor: "CV. Baja Kuat",
+            deskripsi: "Baut dan mur untuk mesin industri.",
             stok: 200,
             satuan: "Pcs",
         },
@@ -48,6 +51,7 @@ export default function AsetKeluarPage() {
             nama: "Kompresor Udara",
             tanggal: "09 Mei 2025",
             distributor: "CV. Udara Power",
+            deskripsi: "Kompresor udara untuk industri.",
             stok: 30,
             satuan: "Liter",
         },
@@ -56,6 +60,7 @@ export default function AsetKeluarPage() {
             nama: "Bor Duduk",
             tanggal: "14 Juni 2025",
             distributor: "UD. Perkakas",
+            deskripsi: "Bor duduk untuk pengeboran presisi.",
             stok: 5,
             satuan: "Unit",
         },
@@ -64,6 +69,7 @@ export default function AsetKeluarPage() {
             nama: "Bearing SKF",
             tanggal: "23 Juli 2025",
             distributor: "PT. Bearing Indo",
+            deskripsi: "Bearing berkualitas tinggi untuk mesin.",
             stok: 30,
             satuan: "Pcs",
         },
@@ -72,6 +78,7 @@ export default function AsetKeluarPage() {
             nama: "Tangki Oli",
             tanggal: "09 Mei 2025",
             distributor: "PT. Pelumas Indo",
+            deskripsi: "Tangki untuk menyimpan oli.",
             stok: 10,
             satuan: "Liter",
         },
@@ -143,6 +150,7 @@ export default function AsetKeluarPage() {
                                 <th className="p-4">Nama Aset</th>
                                 <th className="p-4">Tanggal Keluar</th>
                                 <th className="p-4">Distributor</th>
+                                <th className="p-4">Deskripsi</th>
                                 <th className="p-4">Stok</th>
                                 <th className="p-4">Satuan</th>
                                 <th className="p-4">Aksi</th>
@@ -155,6 +163,7 @@ export default function AsetKeluarPage() {
                                     <td className="p-4">{item.nama}</td>
                                     <td className="p-4">{item.tanggal}</td>
                                     <td className="p-4">{item.distributor}</td>
+                                    <td className="p-4">{item.deskripsi}</td>
                                     <td className="p-4">{item.stok}</td>
                                     <td className="p-4">{item.satuan}</td>
                                     <td className="p-4 flex items-center gap-2">
