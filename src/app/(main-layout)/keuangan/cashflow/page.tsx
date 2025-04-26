@@ -20,8 +20,10 @@ import {
 
 export default function TransaksiSemuaPage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedJenis, setSelectedJenis] = useState("Semua");
-    const [selectedBulan, setSelectedBulan] = useState("Semua");
+    const [selectedBulan, setSelectedBulan] = useState(() => {
+        const now = new Date();
+        return String(now.getMonth() + 1).padStart(2, "0"); // ex: "04"
+    });
 
 
     const transaksiMasuk = [
@@ -66,14 +68,15 @@ export default function TransaksiSemuaPage() {
         const cocokSearch =
             item.pihak.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.keterangan.toLowerCase().includes(searchQuery.toLowerCase());
-        const cocokJenis =
-            selectedJenis === "Semua" || item.jenis === selectedJenis;
-        const cocokBulan =
-            selectedBulan === "Semua" ||
-            new Date(item.tanggal).getMonth() + 1 === parseInt(selectedBulan);
 
-        return cocokSearch && cocokJenis && cocokBulan;
+        const itemMonth = new Date(item.tanggal).getMonth() + 1;
+        const itemBulanStr = String(itemMonth).padStart(2, "0");
+
+        const cocokBulan = itemBulanStr === selectedBulan;
+
+        return cocokSearch && cocokBulan;
     });
+
     const totalMasuk = filteredData
         .filter((item) => item.jenis === "Masuk")
         .reduce((sum, item) => sum + item.nominal, 0);
