@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+import { jsPDF } from "jspdf";
+
 export default function KeuanganKeluarPage() {
     const router = useRouter();
     const [selectedMonth, setSelectedMonth] = useState("April");
@@ -70,6 +72,71 @@ export default function KeuanganKeluarPage() {
     ];
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    const previewExpenseInvoicePDF = (transaction: any) => {
+        const doc = new jsPDF();
+
+        const marginX = 20;
+        let currentY = 20;
+
+        // Header
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("UNIVERSITAS MUHAMMADIYAH YOGYAKARTA", 105, currentY, { align: "center" });
+        currentY += 7;
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text("Jl. Brawijaya, Kasihan, Bantul, Yogyakarta", 105, currentY, { align: "center" });
+
+        currentY += 10;
+        doc.setLineWidth(0.5);
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        // Judul
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("INVOICE PENGELUARAN DANA", 105, currentY, { align: "center" });
+        currentY += 10;
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        // Data pengeluaran
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+
+        const data = [
+            ["Tanggal", transaction.tanggal],
+            ["Deskripsi", transaction.deskripsi],
+            ["Nominal", `Rp ${transaction.nominal.toLocaleString()}`],
+            ["Keterangan", transaction.keterangan],
+        ];
+
+        const labelX = marginX;
+        const valueX = marginX + 45;
+
+        data.forEach(([label, value]) => {
+            doc.text(`${label}`, labelX, currentY);
+            doc.text(":", labelX + 30, currentY);
+            doc.text(`${value}`, valueX, currentY);
+            currentY += 8;
+        });
+
+        currentY += 10;
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        const printedDate = new Date().toLocaleDateString();
+        doc.text(`Yogyakarta, ${printedDate}`, 140, currentY);
+        currentY += 25;
+        doc.text("________________________", 140, currentY);
+        currentY += 7;
+        doc.text("Tanda Tangan", 155, currentY);
+
+        const blob = doc.output("blob");
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, "_blank");
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -153,9 +220,11 @@ export default function KeuanganKeluarPage() {
                                                 variant="outline"
                                                 size="icon"
                                                 className="bg-gray-100 hover:bg-gray-200"
+                                                onClick={() => previewExpenseInvoicePDF(item)}
                                             >
                                                 <Upload size={16} />
                                             </Button>
+
                                         </td>
                                         <td className="p-4 flex items-center gap-2">
                                             <Button

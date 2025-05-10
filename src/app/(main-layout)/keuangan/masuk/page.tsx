@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { jsPDF } from "jspdf";
 
 export default function KeuanganMasukPage() {
     const router = useRouter();
@@ -71,6 +72,80 @@ export default function KeuanganMasukPage() {
     ];
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    const previewReceiptPDF = (transaction: any) => {
+        const doc = new jsPDF();
+
+        // Margin & posisi awal
+        const marginX = 20;
+        let currentY = 20;
+
+        // Header
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("UNIVERSITAS MUHAMMADIYAH YOGYAKARTA", 105, currentY, { align: "center" });
+        currentY += 7;
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text("Jl. Brawijaya, Kasihan, Bantul, Yogyakarta", 105, currentY, { align: "center" });
+
+        currentY += 10;
+
+        // Garis pemisah header
+        doc.setLineWidth(0.5);
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        // Judul Kwitansi
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("KWITANSI PENERIMAAN DANA", 105, currentY, { align: "center" });
+        currentY += 10;
+
+        // Garis bawah judul
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        // Reset font
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+
+        // Data transaksi
+        const data = [
+            ["Tanggal", transaction.tanggal],
+            ["Sumber Dana", transaction.sumber],
+            ["Nominal", `Rp ${transaction.nominal.toLocaleString()}`],
+            ["Keterangan", transaction.keterangan],
+        ];
+
+        const labelX = marginX;
+        const valueX = marginX + 45;
+
+        data.forEach(([label, value]) => {
+            doc.text(`${label}`, labelX, currentY);
+            doc.text(":", labelX + 30, currentY);
+            doc.text(`${value}`, valueX, currentY);
+            currentY += 8;
+        });
+
+        currentY += 10;
+        doc.line(marginX, currentY, 210 - marginX, currentY);
+        currentY += 10;
+
+        // Footer: Tanggal Cetak & Tanda Tangan
+        const printedDate = new Date().toLocaleDateString();
+        doc.text(`Yogyakarta, ${printedDate}`, 140, currentY);
+        currentY += 25;
+
+        doc.text("________________________", 140, currentY);
+        currentY += 7;
+        doc.text("Tanda Tangan", 155, currentY);
+
+        // Preview PDF
+        const blob = doc.output("blob");
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -152,6 +227,7 @@ export default function KeuanganMasukPage() {
                                                 variant="outline"
                                                 size="icon"
                                                 className="bg-gray-100 hover:bg-gray-200"
+                                                onClick={() => previewReceiptPDF(item)}
                                             >
                                                 <Upload size={16} />
                                             </Button>
