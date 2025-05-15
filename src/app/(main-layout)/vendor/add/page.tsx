@@ -1,25 +1,61 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
+import { toast } from "sonner";
+import axios from "axios";
+import { BASE_URL } from "@/constant/BaseURL";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea"; // Jika kamu punya komponen ini
+
+// Validasi schema dengan Zod
+const vendorSchema = z.object({
+    name: z.string().min(1, "Nama vendor harus diisi"),
+    email: z.string().email("Email tidak valid"),
+    phone: z.string().min(1, "Telepon harus diisi"),
+    address: z.string().min(1, "Alamat harus diisi"),
+});
 
 export default function AddVendorPage() {
-    const [nama, setNama] = useState("");
-    const [email, setEmail] = useState("");
-    const [telepon, setTelepon] = useState("");
-    const [alamat, setAlamat] = useState("");
+    const router = useRouter();
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const data = { nama, email, telepon, alamat };
-        console.log("Vendor Ditambahkan:", data);
-        alert("Vendor berhasil ditambahkan!");
-        // TODO: Kirim ke API/backend
+    const form = useForm<z.infer<typeof vendorSchema>>({
+        resolver: zodResolver(vendorSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+        },
+    });
+
+    const onSubmit = async (values: z.infer<typeof vendorSchema>) => {
+        try {
+            await toast.promise(
+                axios.post(`${BASE_URL}/vendors`, values, {
+                    withCredentials: true,
+                }),
+                {
+                    loading: "Menyimpan vendor...",
+                    success: () => {
+                        router.push("/vendor");
+                        return "Vendor berhasil ditambahkan!";
+                    },
+                    error: (err) => {
+                        const msg = err?.response?.data?.message || "Terjadi kesalahan.";
+                        return `Gagal menyimpan: ${msg}`;
+                    },
+                }
+            );
+        } catch (err) {
+            console.error("Submit error:", err);
+        }
     };
 
     return (
@@ -39,55 +75,44 @@ export default function AddVendorPage() {
                         <CardTitle>Form Tambah Vendor</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            {/* Nama */}
                             <div className="space-y-1">
                                 <Label>Nama Vendor</Label>
-                                <Input
-                                    value={nama}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                        setNama(e.target.value)
-                                    }
-                                    required
-                                />
+                                <Input {...form.register("name")} />
+                                {form.formState.errors.name && (
+                                    <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
+                                )}
                             </div>
 
+                            {/* Email */}
                             <div className="space-y-1">
                                 <Label>Email</Label>
-                                <Input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                        setEmail(e.target.value)
-                                    }
-                                    required
-                                />
+                                <Input type="email" {...form.register("email")} />
+                                {form.formState.errors.email && (
+                                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
+                                )}
                             </div>
 
+                            {/* Telepon */}
                             <div className="space-y-1">
                                 <Label>Telepon</Label>
-                                <Input
-                                    type="tel"
-                                    value={telepon}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                        setTelepon(e.target.value)
-                                    }
-                                    required
-                                />
+                                <Input {...form.register("phone")} />
+                                {form.formState.errors.phone && (
+                                    <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
+                                )}
                             </div>
 
+                            {/* Alamat */}
                             <div className="space-y-1">
                                 <Label>Alamat</Label>
-                                <Textarea
-                                    value={alamat}
-                                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                                        setAlamat(e.target.value)
-                                    }
-                                    required
-                                    rows={3}
-                                />
+                                <Textarea rows={3} {...form.register("address")} />
+                                {form.formState.errors.address && (
+                                    <p className="text-sm text-red-500">{form.formState.errors.address.message}</p>
+                                )}
                             </div>
 
+                            {/* Submit */}
                             <div className="flex justify-end pt-4">
                                 <Button type="submit">Simpan</Button>
                             </div>
