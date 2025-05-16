@@ -12,7 +12,7 @@ import { BASE_URL } from "@/constant/BaseURL";
 import { toast } from "sonner";
 
 export default function AddNotulensiPage() {
-    const { id: programId } = useParams();
+    const { id: programId, eventId } = useParams();
     const router = useRouter();
 
     const [nama, setNama] = useState("");
@@ -41,7 +41,7 @@ export default function AddNotulensiPage() {
         formData.append("name", nama);
         formData.append("description", description);
         formData.append("tanggal", tanggal);
-        formData.append("programId", programId as string);
+        formData.append("eventId", eventId as string);
         formData.append("files", file); // ✅ PENTING: gunakan "files" sesuai backend
 
         toast.promise(
@@ -55,7 +55,7 @@ export default function AddNotulensiPage() {
                 loading: "Mengunggah notulensi...",
                 success: () => {
                     setTimeout(() => {
-                        router.push(`/program/${programId}/subprogram`);
+                        router.push(`/program/${programId}/event/${eventId}/notulensi`);
                     }, 500);
                     return "Notulensi berhasil ditambahkan!";
                 },

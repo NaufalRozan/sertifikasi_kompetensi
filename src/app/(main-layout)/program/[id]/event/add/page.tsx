@@ -104,7 +104,7 @@ export default function AddEventPage() {
                     loading: "Menyimpan data...",
                     success: () => {
                         setTimeout(() => {
-                            router.push(`/program/${programId}/subprogram`);
+                            router.push(`/program/${programId}/event`);
                         }, 500);
                         return "Event berhasil ditambahkan!";
                     },

@@ -128,7 +128,7 @@ export default function EditEventPage() {
                 }
             );
 
-            router.push(`/program/${programId}/subprogram`);
+            router.push(`/program/${programId}/event`);
         } catch (err) {
             console.error(err);
         }

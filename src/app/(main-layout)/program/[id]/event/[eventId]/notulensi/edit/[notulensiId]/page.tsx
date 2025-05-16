@@ -23,7 +23,7 @@ const formSchema = z.object({
 
 export default function EditNotulensiPage() {
     const router = useRouter();
-    const { id: programId, notulensiId } = useParams();
+    const { id: programId, notulensiId, eventId } = useParams();
 
     const [existingFile, setExistingFile] = useState<any | null>(null);
     const [newFile, setNewFile] = useState<File | null>(null);
@@ -85,11 +85,14 @@ export default function EditNotulensiPage() {
         formData.append("name", values.name);
         formData.append("description", values.description);
         formData.append("tanggal", new Date(values.tanggal).toISOString());
-        formData.append("programId", programId as string);
+        formData.append("eventId", eventId as string);
 
         if (newFile) {
             formData.append("files", newFile);
+        } else {
+            formData.append("retainFile", "true"); // opsional, tergantung backend kamu
         }
+
         try {
             await toast.promise(
                 axios.put(`${BASE_URL}/notulensi/${notulensiId}`, formData, {
@@ -102,7 +105,7 @@ export default function EditNotulensiPage() {
                     error: "Gagal memperbarui notulensi.",
                 }
             );
-            router.push(`/program/${programId}/subprogram`);
+            router.push(`/program/${programId}/event/${eventId}/notulensi`);
         } catch (err: any) {
             console.error("Error:", err?.response?.data || err.message);
         }

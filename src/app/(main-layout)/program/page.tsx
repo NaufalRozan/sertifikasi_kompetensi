@@ -122,96 +122,102 @@ export default function ProgramPage() {
 
                 {/* Card Grid */}
                 {!loading && !error && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {data.map((item) => (
-                            <Card
-                                key={item.id}
-                                onClick={() => router.push(`/program/${item.id}/subprogram`)}
-                                className="cursor-pointer hover:shadow-md transition"
-                            >
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-red-700 text-lg">
-                                        {new Date(item.startDate).toLocaleDateString("id-ID", {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                        })}{" "}
-                                        -{" "}
-                                        {new Date(item.endDate).toLocaleDateString("id-ID", {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                        })}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <div className="text-sm text-gray-700 font-semibold">Program: {item.name}</div>
-                                    <div className="text-sm text-gray-700">{item.description}</div>
-                                    <div className="mt-1">
-                                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusStyle(item.status)}`}>
-                                            {item.status}
-                                        </span>
-                                    </div>
-                                    <div className="flex gap-2 justify-end pt-3">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                router.push(`/program/edit/${item.id}`); // ⬅️ buka halaman edit
-                                            }}
-                                        >
-                                            <Pencil size={16} />
-                                        </Button>
-
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
+                    <>
+                        {data.length === 0 ? (
+                            <p className="text-center text-white">Belum ada program tersedia.</p>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {data.map((item) => (
+                                    <Card
+                                        key={item.id}
+                                        onClick={() => router.push(`/program/${item.id}/event`)}
+                                        className="cursor-pointer hover:shadow-md transition"
+                                    >
+                                        <CardHeader className="pb-2">
+                                            <CardTitle className="text-red-700 text-lg">
+                                                {new Date(item.startDate).toLocaleDateString("id-ID", {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                })}{" "}
+                                                -{" "}
+                                                {new Date(item.endDate).toLocaleDateString("id-ID", {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                })}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2">
+                                            <div className="text-sm text-gray-700 font-semibold">Program: {item.name}</div>
+                                            <div className="text-sm text-gray-700">{item.description}</div>
+                                            <div className="mt-1">
+                                                <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusStyle(item.status)}`}>
+                                                    {item.status}
+                                                </span>
+                                            </div>
+                                            <div className="flex gap-2 justify-end pt-3">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={(e) => e.stopPropagation()} // hindari trigger card navigation
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.push(`/program/edit/${item.id}`); // ⬅️ buka halaman edit
+                                                    }}
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Pencil size={16} />
                                                 </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        Tindakan ini tidak bisa dibatalkan. Data program akan hilang secara permanen.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        className="bg-red-600 hover:bg-red-700 text-white"
-                                                        onClick={async () => {
-                                                            try {
-                                                                await axios.delete(`${BASE_URL}/programs/${item.id}`, {
-                                                                    withCredentials: true,
-                                                                });
-                                                                setData((prev) => prev.filter((p) => p.id !== item.id));
-                                                                toast.success("Program berhasil dihapus!");
-                                                            } catch (err) {
-                                                                console.error(err);
-                                                                toast.error("Gagal menghapus program.");
-                                                            }
-                                                        }}
-                                                    >
-                                                        Hapus
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
+
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={(e) => e.stopPropagation()} // hindari trigger card navigation
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Tindakan ini tidak bisa dibatalkan. Data program akan hilang secara permanen.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                className="bg-red-600 hover:bg-red-700 text-white"
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await axios.delete(`${BASE_URL}/programs/${item.id}`, {
+                                                                            withCredentials: true,
+                                                                        });
+                                                                        setData((prev) => prev.filter((p) => p.id !== item.id));
+                                                                        toast.success("Program berhasil dihapus!");
+                                                                    } catch (err) {
+                                                                        console.error(err);
+                                                                        toast.error("Gagal menghapus program.");
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Hapus
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
 
 
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
 
-                        ))}
-                    </div>
-                )}
+                                ))}
+                            </div>
+
+                        )}
+                    </>)}
             </div>
 
         </div>
