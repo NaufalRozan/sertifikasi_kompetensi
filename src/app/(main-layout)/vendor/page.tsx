@@ -7,6 +7,19 @@ import { Building2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/constant/BaseURL";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+
 
 export default function VendorPage() {
     const router = useRouter();
@@ -75,6 +88,11 @@ export default function VendorPage() {
                         <div className="p-4 text-center text-gray-500">Memuat data vendor...</div>
                     ) : error ? (
                         <div className="p-4 text-center text-red-500">{error}</div>
+                    ) : vendors.length === 0 ? (
+                        <div className="p-10 text-center text-gray-500 italic">
+                            Belum ada vendor yang ditambahkan.
+
+                        </div>
                     ) : (
                         <table className="w-full text-sm text-left">
                             <thead className="text-red-700 font-semibold border-b">
@@ -104,16 +122,54 @@ export default function VendorPage() {
                                                     size="icon"
                                                     variant="ghost"
                                                     className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
+                                                    onClick={() => router.push(`/vendor/edit/${vendor.id}`)}
                                                 >
                                                     <Pencil size={16} />
                                                 </Button>
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    className="bg-red-100 hover:bg-red-200 text-red-600"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </Button>
+
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="bg-red-100 hover:bg-red-200 text-red-600"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+
+                                                    <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Yakin ingin menghapus vendor?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Tindakan ini tidak dapat dibatalkan. Data vendor akan dihapus secara permanen.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                className="bg-red-600 hover:bg-red-700 text-white"
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await axios.delete(`${BASE_URL}/vendors/${vendor.id}`, {
+                                                                            withCredentials: true,
+                                                                        });
+                                                                        setVendors((prev) => prev.filter((v) => v.id !== vendor.id));
+                                                                        toast.success("Vendor berhasil dihapus!");
+                                                                    } catch (err) {
+                                                                        console.error(err);
+                                                                        toast.error("Gagal menghapus vendor.");
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Hapus
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+
                                             </td>
                                         </tr>
                                     ))}

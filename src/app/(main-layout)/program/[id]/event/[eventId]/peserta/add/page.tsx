@@ -63,9 +63,9 @@ export default function AddPesertaPage() {
             email: user.email ?? "",
             phone: user.phone ?? "",
             nim: user.nim ?? "",
-            status: user.status ?? "Belum",
+            status: user.status ?? "",
             balance: user.balance ?? 0,
-            sertifikasiTerdaftar: user.sertifikasiTerdaftar ?? "Belum Ditentukan",
+            sertifikasiTerdaftar: user.sertifikasiTerdaftar ?? "",
             picture: user.picture ?? "",
             providerId: user.providerId ?? "",
             eventId: eventId as string, // <-- penting untuk relasi
