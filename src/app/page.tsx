@@ -16,8 +16,8 @@ export default function HomePage() {
             className="flex justify-start items-center hover:opacity-85 transition-opacity duration-300"
           >
             <PanelsTopLeft className="w-6 h-6 mr-3" />
-            <span className="font-bold">Sertifikasi Kompetensi</span>
-            <span className="sr-only">Sertifikasi Kompetensi</span>
+            <span className="font-bold">SIM CV Metric</span>
+            <span className="sr-only">SIM CV Metric</span>
           </Link>
           <nav className="ml-auto flex items-center gap-2">
             <Button

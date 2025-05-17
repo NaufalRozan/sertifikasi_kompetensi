@@ -155,7 +155,7 @@ export default function EditProgramPage() {
                                         <SelectValue placeholder="Pilih status" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {["Dijadwalkan", "Proses", "Selesai"].map((item) => (
+                                        {["Dijadwalkan", "Proses", "Selesai", "Dibatalkan"].map((item) => (
                                             <SelectItem key={item} value={item}>
                                                 {item}
                                             </SelectItem>

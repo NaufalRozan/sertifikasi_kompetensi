@@ -85,12 +85,12 @@ export function getMenuList(pathname: string): Group[] {
               href: "/hrd/manajemen-trainer",
             },
             {
-              label: "Manajemen Pengurus",
-              href: "/hrd/manajemen-pengurus",
+              label: "Manajemen Penanggung Jawab",
+              href: "/hrd/manajemen-pj",
             },
             {
-              label: "Manajemen Instruktur",
-              href: "/hrd/manajemen-instruktur",
+              label: "Manajemen Staf",
+              href: "/hrd/manajemen-staf",
             },
             {
               label: "Manajemen Asessor",

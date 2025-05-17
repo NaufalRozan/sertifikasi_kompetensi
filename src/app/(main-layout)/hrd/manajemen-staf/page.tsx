@@ -13,7 +13,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 
-export default function ManajemenInstrukturPage() {
+export default function ManajemenIStafPage() {
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
 
     const data = [
@@ -102,7 +102,7 @@ export default function ManajemenInstrukturPage() {
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Layers className="w-5 h-5" />
-                    Manajemen Instruktur
+                    Manajemen Staf
                 </div>
             </div>
 
@@ -132,7 +132,7 @@ export default function ManajemenInstrukturPage() {
                             </Select>
                         </div>
                         <div className="text-sm font-semibold text-white">
-                            Jumlah Instruktur: <span className="font-bold">{searchedData.length}</span>
+                            Jumlah Staf: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 

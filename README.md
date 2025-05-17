@@ -1,4 +1,4 @@
-# 🎓 Sertifikasi Kompetensi
+# 🎓 SIM CV Metric
 
 Aplikasi web untuk manajemen sertifikasi.
 

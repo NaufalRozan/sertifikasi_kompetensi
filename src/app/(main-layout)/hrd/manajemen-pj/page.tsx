@@ -13,7 +13,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 
-export default function ManajemenPengurusPage() {
+export default function ManajemenPenannggungJawabPage() {
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
 
     const data = [
@@ -102,7 +102,7 @@ export default function ManajemenPengurusPage() {
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <UserCog className="w-5 h-5" />
-                    Manajemen Pengurus
+                    Manajemen Penanggung Jawab
                 </div>
             </div>
 
@@ -132,13 +132,13 @@ export default function ManajemenPengurusPage() {
                             </Select>
                         </div>
                         <div className="text-sm font-semibold text-white">
-                            Jumlah Pengurus: <span className="font-bold">{searchedData.length}</span>
+                            Jumlah Penanggung Jawab: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
                     <Input
                         type="text"
-                        placeholder="Cari pengurus..."
+                        placeholder="Cari penanggung jawab..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
