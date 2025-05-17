@@ -102,8 +102,8 @@ export default function OtoritasKeuanganPage() {
                                     <th className="p-4">Tanggal</th>
                                     <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Nominal</th>
-                                    <th className="p-4">Approval Pengurus 1</th>
-                                    <th className="p-4">Approval Pengurus 2</th>
+                                    <th className="p-4">Approval Komisaris</th>
+                                    <th className="p-4">Approval Direktur</th>
                                     <th className="p-4">Receipt</th>
                                     <th className="p-4">Aksi</th>
                                 </tr>

@@ -115,7 +115,7 @@ const AuthPage = () => {
                     <h2 className="font-bold text-3xl text-[#AA2727]">Login</h2>
 
                     <p className="text-s mt-2 text-[#AA2727]">
-                        Sertifikasi Kompetensi
+                        SIM CV Metric
                     </p>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">

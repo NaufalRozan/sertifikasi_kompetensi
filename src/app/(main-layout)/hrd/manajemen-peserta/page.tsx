@@ -74,11 +74,14 @@ export default function ManajemenPesertaPage() {
       ? data
       : data.filter((item) => item.sertifikasi === selectedSertifikasi);
 
-  const searchedData = filteredData.filter(
-    (item) =>
-      item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const searchedData = filteredData.filter((item) => {
+    const nama = item.nama?.toLowerCase() || "";
+    const email = item.email?.toLowerCase() || "";
+    const query = searchQuery.toLowerCase();
+
+    return nama.includes(query) || email.includes(query);
+  });
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -154,34 +157,28 @@ export default function ManajemenPesertaPage() {
               <tbody>
                 {searchedData.map((item, idx) => (
                   <tr key={idx} className="border-b hover:bg-gray-50">
-                    <td className="p-4">{item.nim}</td>
-                    <td className="p-4">{item.nama}</td>
-                    <td className="p-4">{item.email}</td>
-                    <td className="p-4">{item.whatsapp}</td>
-                    <td className="p-4">{item.sertifikasi}</td>
-                    <td className="p-4">{formatRupiah(item.saldo)}</td>
+                    <td className="p-4">{item.nim ?? "-"}</td>
+                    <td className="p-4">{item.name ?? "-"}</td>
+                    <td className="p-4">{item.email ?? "-"}</td>
+                    <td className="p-4">{item.phone ?? "-"}</td>
+                    <td className="p-4">{item.sertifikasiTerdaftar ?? "-"}</td>
+                    <td className="p-4">{formatRupiah(item.balance)}</td>
                     <td className="p-4">
                       <span
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status ?? "Belum")}`}
                       >
-                        {item.status}
+                        {item.status ?? "Belum"}
                       </span>
                     </td>
                     <td className="p-4">
-                      {item.pdf ? (
-                        <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">
-                          PDF
-                        </span>
+                      {item.sertifikat ? (
+                        <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">PDF</span>
                       ) : (
                         "-"
                       )}
                     </td>
                     <td className="p-4">
-                      <span
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
-                      >
-                        {item.notifikasi}
-                      </span>
+                      <span className="px-3 py-1 text-xs text-gray-400 font-medium">-</span>
                     </td>
                   </tr>
                 ))}

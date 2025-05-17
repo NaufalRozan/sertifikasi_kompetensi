@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Layers } from "lucide-react";
+import { UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,51 +13,51 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 
-export default function ManajemenInstrukturPage() {
+export default function ManajemenPenannggungJawabPage() {
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
 
     const data = [
         {
-            nip: "ST001",
-            nama: "Putri Anggraeni",
-            email: "putri.struktur@gmail.com",
-            whatsapp: "081234567805",
-            jabatan: "Manager K3",
-            unit: "Divisi Keselamatan",
+            nip: "PG001",
+            nama: "Dedi Susanto",
+            email: "dedi.pengurus@gmail.com",
+            whatsapp: "081234567800",
+            jabatan: "Direktur",
+            unit: "Divisi A",
             sertifikasi: "K3 Umum",
             status: "Aktif",
             notifikasi: "Terkirim",
-            npwp: "45.678.123.9-001.000",
-            namaBank: "Bank BCA",
-            rekening: "9988776655",
+            npwp: "12.111.222.3-444.000",
+            namaBank: "Bank BRI",
+            rekening: "1122334455",
         },
         {
-            nip: "ST002",
-            nama: "Ahmad Firdaus",
-            email: "ahmad.firdaus@gmail.com",
-            whatsapp: "081234567806",
-            jabatan: "Supervisor",
-            unit: "Divisi Operasional",
-            sertifikasi: "K3 Engineering",
+            nip: "PG002",
+            nama: "Wulandari",
+            email: "wulan.pengurus@gmail.com",
+            whatsapp: "081234567801",
+            jabatan: "Komisaris",
+            unit: "Divisi B",
+            sertifikasi: "K3 Mekanik",
             status: "Nonaktif",
             notifikasi: "Belum",
-            npwp: "55.999.888.1-002.000",
-            namaBank: "Bank BRI",
-            rekening: "8877665544",
+            npwp: "44.555.666.7-888.000",
+            namaBank: "Bank BNI",
+            rekening: "2233445566",
         },
         {
-            nip: "ST003",
-            nama: "Nadia Kamila",
-            email: "nadia.kamila@gmail.com",
-            whatsapp: "081234567807",
-            jabatan: "Koordinator K3",
-            unit: "Divisi Proyek",
-            sertifikasi: "K3 Mekanik",
+            nip: "PG003",
+            nama: "Hendri Kurniawan",
+            email: "hendri.kurnia@gmail.com",
+            whatsapp: "081234567802",
+            jabatan: "Pengurus",
+            unit: "Divisi C",
+            sertifikasi: "K3 Engineering",
             status: "Aktif",
             notifikasi: "Terkirim",
-            npwp: "11.222.333.4-567.000",
-            namaBank: "Bank BNI",
-            rekening: "7766554433",
+            npwp: "77.888.999.0-111.000",
+            namaBank: "Bank Mandiri",
+            rekening: "3344556677",
         },
     ];
 
@@ -101,14 +101,14 @@ export default function ManajemenInstrukturPage() {
             {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
-                    <Layers className="w-5 h-5" />
-                    Manajemen Instruktur
+                    <UserCog className="w-5 h-5" />
+                    Manajemen Penanggung Jawab
                 </div>
             </div>
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-                {/* Filter & Search */}
+                {/* Filter dan Jumlah */}
                 <div className="flex flex-col gap-4 mb-4">
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
@@ -132,13 +132,13 @@ export default function ManajemenInstrukturPage() {
                             </Select>
                         </div>
                         <div className="text-sm font-semibold text-white">
-                            Jumlah Instruktur: <span className="font-bold">{searchedData.length}</span>
+                            Jumlah Penanggung Jawab: <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
                     <Input
                         type="text"
-                        placeholder="Cari struktur..."
+                        placeholder="Cari penanggung jawab..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
@@ -178,16 +178,12 @@ export default function ManajemenInstrukturPage() {
                                     <td className="p-4">{item.namaBank}</td>
                                     <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
-                                        >
+                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>
                                             {item.status}
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
-                                        >
+                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}>
                                             {item.notifikasi}
                                         </span>
                                     </td>

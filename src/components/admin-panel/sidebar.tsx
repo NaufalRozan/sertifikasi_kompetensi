@@ -77,8 +77,8 @@ function SidebarContent({
       <div className="flex items-center justify-center w-full px-4 py-6">
         {!collapsed && (
           <div className="leading-tight">
-            <div className="font-bold text-black text-[20px] text-left">Sertifikasi</div>
-            <div className="font-bold italic text-[20px] text-[#A94442] pl-6">Kompetensi</div>
+            <div className="font-bold text-black text-[20px] ">SIM CV Metric</div>
+            {/* <div className="font-bold italic text-[20px] text-[#A94442] pl-6">CV Metric</div> */}
           </div>
         )}
       </div>
