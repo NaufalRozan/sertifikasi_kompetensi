@@ -101,10 +101,14 @@ export default function EditNotulensiPage() {
                 }),
                 {
                     loading: "Menyimpan perubahan...",
-                    success: "Notulensi berhasil diperbarui!",
+                    success: () => {
+                        router.push(`/program/${programId}/event/${eventId}/notulensi`);
+                        return "Notulensi berhasil diperbarui!";
+                    },
                     error: "Gagal memperbarui notulensi.",
                 }
             );
+
             router.push(`/program/${programId}/event/${eventId}/notulensi`);
         } catch (err: any) {
             console.error("Error:", err?.response?.data || err.message);
