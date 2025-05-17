@@ -88,7 +88,7 @@ export default function AddNotulensiPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {/* Nama Notulensi */}
                             <div className="space-y-1">
-                                <Label>Nama / Topik</Label>
+                                <Label>Topik</Label>
                                 <Input
                                     value={nama}
                                     onChange={(e) => setNama(e.target.value)}
