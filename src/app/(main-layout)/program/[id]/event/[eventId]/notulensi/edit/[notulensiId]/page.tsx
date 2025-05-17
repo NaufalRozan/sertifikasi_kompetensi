@@ -131,7 +131,7 @@ export default function EditNotulensiPage() {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             {/* Nama */}
                             <div className="space-y-1">
-                                <Label>Nama / Topik</Label>
+                                <Label>Topik</Label>
                                 <Input {...register("name")} />
                                 {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                             </div>
