@@ -108,8 +108,6 @@ export default function EditNotulensiPage() {
                     error: "Gagal memperbarui notulensi.",
                 }
             );
-
-            router.push(`/program/${programId}/event/${eventId}/notulensi`);
         } catch (err: any) {
             console.error("Error:", err?.response?.data || err.message);
         }
