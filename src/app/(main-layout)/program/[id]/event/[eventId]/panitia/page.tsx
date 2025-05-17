@@ -4,14 +4,18 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BASE_URL } from "@/constant/BaseURL";
 
 export default function PanitiaEventPage() {
     const { id: programId, eventId } = useParams();
     const router = useRouter();
+
     const [panitiaData, setPanitiaData] = useState<any[]>([]);
+    const [eventData, setEventData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Dummy panitia data
         const dummyPanitia = [
             {
                 nip: "PIC001",
@@ -71,10 +75,22 @@ export default function PanitiaEventPage() {
             }
         ];
 
+        const fetchEvent = async () => {
+            try {
+                const res = await fetch(`${BASE_URL}/events/${eventId}`, {
+                    credentials: "include",
+                });
+                const json = await res.json();
+                setEventData(json.data);
+            } catch (err) {
+                console.error("Gagal memuat data event:", err);
+            }
+        };
 
         setPanitiaData(dummyPanitia);
+        fetchEvent();
         setLoading(false);
-    }, []);
+    }, [eventId]);
 
     const getBadgeStyle = (value: string) => {
         switch (value) {
@@ -94,7 +110,7 @@ export default function PanitiaEventPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header Merah */}
+            {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <Users className="w-5 h-5" />
@@ -104,6 +120,18 @@ export default function PanitiaEventPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10 space-y-6">
+                {/* Info Event */}
+                {eventData && (
+                    <div className="bg-white rounded-xl shadow px-6 py-4">
+                        <h2 className="text-xl font-bold text-red-700 mb-2">{eventData.name}</h2>
+                        <p className="text-sm text-gray-600">{eventData.description}</p>
+                        <p className="text-sm mt-1 text-gray-500">
+                            {new Date(eventData.startDate).toLocaleDateString("id-ID")} -{" "}
+                            {new Date(eventData.endDate).toLocaleDateString("id-ID")}
+                        </p>
+                    </div>
+                )}
+
                 {/* Tombol Tambah */}
                 <div className="flex justify-end">
                     <Button

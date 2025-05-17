@@ -29,6 +29,7 @@ export default function NotulensiEventPage() {
     const router = useRouter();
     const { id: programId, eventId } = useParams();
     const [notulensiData, setNotulensiData] = useState<any[]>([]);
+    const [eventData, setEventData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -47,21 +48,37 @@ export default function NotulensiEventPage() {
             }
         };
 
-        fetchNotulensi();
+        const fetchEvent = async () => {
+            try {
+                const res = await axios.get(`${BASE_URL}/events/${eventId}`, {
+                    withCredentials: true,
+                });
+                setEventData(res.data.data);
+            } catch (err) {
+                console.error("Gagal memuat event", err);
+            }
+        };
+
+        if (eventId) {
+            fetchNotulensi();
+            fetchEvent();
+        }
     }, [eventId]);
 
-
     const handleDeleteNotulensi = async (notulensiId: string) => {
-        try {
-            await axios.delete(`${BASE_URL}/notulensi/${notulensiId}`, {
+        await toast.promise(
+            axios.delete(`${BASE_URL}/notulensi/${notulensiId}`, {
                 withCredentials: true,
-            });
-            toast.success("Notulensi berhasil dihapus!");
-            setNotulensiData(prev => prev.filter((n) => n.id !== notulensiId));
-        } catch (err) {
-            console.error(err);
-            toast.error("Gagal menghapus notulensi.");
-        }
+            }),
+            {
+                loading: "Menghapus notulensi...",
+                success: () => {
+                    setNotulensiData((prev) => prev.filter((n) => n.id !== notulensiId));
+                    return "Notulensi berhasil dihapus!";
+                },
+                error: "Gagal menghapus notulensi.",
+            }
+        );
     };
 
     if (loading) return <p className="text-center mt-10 text-gray-500">Memuat notulensi...</p>;
@@ -79,6 +96,18 @@ export default function NotulensiEventPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10 space-y-6">
+                {/* Info Event */}
+                {eventData && (
+                    <div className="bg-white rounded-xl shadow px-6 py-4">
+                        <h2 className="text-xl font-bold text-red-700 mb-2">{eventData.name}</h2>
+                        <p className="text-sm text-gray-600">{eventData.description}</p>
+                        <p className="text-sm mt-1 text-gray-500">
+                            {new Date(eventData.startDate).toLocaleDateString("id-ID")} -{" "}
+                            {new Date(eventData.endDate).toLocaleDateString("id-ID")}
+                        </p>
+                    </div>
+                )}
+
                 {/* Tombol Tambah */}
                 <div className="flex justify-end">
                     <Button
@@ -140,7 +169,9 @@ export default function NotulensiEventPage() {
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                onClick={() => router.push(`/program/${programId}/event/${eventId}/notulensi/edit/${item.id}`)}
+                                                onClick={() =>
+                                                    router.push(`/program/${programId}/event/${eventId}/notulensi/edit/${item.id}`)
+                                                }
                                                 className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
                                             >
                                                 <Pencil className="w-4 h-4" />

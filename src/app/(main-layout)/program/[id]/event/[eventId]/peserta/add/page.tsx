@@ -20,21 +20,24 @@ export default function AddPesertaPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchUnconnectedPeserta = async () => {
             try {
-                const res = await axios.get(`${BASE_URL}/peserta`, {
+                const res = await axios.get(`${BASE_URL}/events/unconnected-peserta/${eventId}`, {
                     withCredentials: true,
                 });
                 setAllUsers(res.data.data || []);
             } catch (error) {
+                console.error(error);
                 toast.error("Gagal memuat daftar peserta.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchUsers();
-    }, []);
+        if (eventId) {
+            fetchUnconnectedPeserta();
+        }
+    }, [eventId]);
 
     const handleCheckboxChange = (userId: string) => {
         setSelectedUserIds((prev) => {
@@ -51,39 +54,27 @@ export default function AddPesertaPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const selectedUsers = allUsers.filter((user) => selectedUserIds.has(user.id));
-
-        if (selectedUsers.length === 0) {
+        if (selectedUserIds.size === 0) {
             toast.error("Pilih minimal satu peserta.");
             return;
         }
 
-        const payload = selectedUsers.map((user) => ({
-            name: user.name ?? "",
-            email: user.email ?? "",
-            phone: user.phone ?? "",
-            nim: user.nim ?? "",
-            status: user.status ?? "",
-            balance: user.balance ?? 0,
-            sertifikasiTerdaftar: user.sertifikasiTerdaftar ?? "",
-            picture: user.picture ?? "",
-            providerId: user.providerId ?? "",
-            eventId: eventId as string, // <-- penting untuk relasi
-        }));
-
-        console.log("Payload yang dikirim:", payload); // Debug saat error
+        const payload = {
+            id: eventId,
+            pesertaIds: Array.from(selectedUserIds),
+        };
 
         toast.promise(
-            axios.post(`${BASE_URL}/peserta/many`, payload, {
+            axios.post(`${BASE_URL}/events/connect-many-peserta`, payload, {
                 withCredentials: true,
             }),
             {
-                loading: "Menyimpan peserta...",
+                loading: "Menghubungkan peserta ke event...",
                 success: () => {
                     setTimeout(() => {
                         router.push(`/program/${programId}/event/${eventId}/peserta`);
                     }, 500);
-                    return "Peserta berhasil ditambahkan!";
+                    return "Peserta berhasil ditambahkan ke event!";
                 },
                 error: (err) => {
                     const msg = err?.response?.data?.message || err.message;
@@ -114,7 +105,7 @@ export default function AddPesertaPage() {
                             {loading ? (
                                 <p className="text-gray-500 text-center">Memuat data peserta...</p>
                             ) : allUsers.length === 0 ? (
-                                <p className="text-gray-500 italic text-center">Tidak ada data peserta.</p>
+                                <p className="text-gray-500 italic text-center">Tidak ada peserta yang tersedia.</p>
                             ) : (
                                 <div className="space-y-3 max-h-[400px] overflow-y-auto border p-3 rounded-md">
                                     {allUsers.map((user) => (
