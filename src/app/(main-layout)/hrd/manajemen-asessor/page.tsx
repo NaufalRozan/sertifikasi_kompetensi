@@ -15,6 +15,9 @@ import {
 
 export default function ManajemenAsessorPage() {
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     const data = [
         {
@@ -53,6 +56,90 @@ export default function ManajemenAsessorPage() {
             namaBank: "Bank BCA",
             rekening: "4433221100",
         },
+        {
+            nip: "AS004",
+            nama: "Intan Permata",
+            email: "intan.permata@gmail.com",
+            whatsapp: "081234567883",
+            sertifikasi: "NDT Level II",
+            status: "Aktif",
+            notifikasi: "Terkirim",
+            npwp: "99.111.222.3-123.000",
+            namaBank: "Bank BRI",
+            rekening: "3322110099",
+        },
+        {
+            nip: "AS005",
+            nama: "Agus Prabowo",
+            email: "agus.prabowo@gmail.com",
+            whatsapp: "081234567884",
+            sertifikasi: "K3 Mekanik",
+            status: "Nonaktif",
+            notifikasi: "Belum",
+            npwp: "11.222.333.4-456.000",
+            namaBank: "Bank Mandiri",
+            rekening: "2211009988",
+        },
+        {
+            nip: "AS006",
+            nama: "Dewi Kartika",
+            email: "dewi.kartika@gmail.com",
+            whatsapp: "081234567885",
+            sertifikasi: "K3 Umum",
+            status: "Aktif",
+            notifikasi: "Terkirim",
+            npwp: "22.333.444.5-567.000",
+            namaBank: "Bank BCA",
+            rekening: "1100998877",
+        },
+        {
+            nip: "AS007",
+            nama: "Rudi Wijaya",
+            email: "rudi.wijaya@gmail.com",
+            whatsapp: "081234567886",
+            sertifikasi: "K3 Engineering",
+            status: "Nonaktif",
+            notifikasi: "Belum",
+            npwp: "55.666.777.8-901.000",
+            namaBank: "Bank BNI",
+            rekening: "0099887766",
+        },
+        {
+            nip: "AS008",
+            nama: "Mega Sari",
+            email: "mega.sari@gmail.com",
+            whatsapp: "081234567887",
+            sertifikasi: "K3 Mekanik",
+            status: "Aktif",
+            notifikasi: "Terkirim",
+            npwp: "66.777.888.9-012.000",
+            namaBank: "Bank BRI",
+            rekening: "9988776655",
+        },
+        {
+            nip: "AS009",
+            nama: "Taufik Hidayat",
+            email: "taufik.h@gmail.com",
+            whatsapp: "081234567888",
+            sertifikasi: "Welding Inspector (CWI)",
+            status: "Aktif",
+            notifikasi: "Terkirim",
+            npwp: "77.888.999.0-123.000",
+            namaBank: "Bank CIMB",
+            rekening: "8877665544",
+        },
+        {
+            nip: "AS010",
+            nama: "Sinta Lestari",
+            email: "sinta.lestari@gmail.com",
+            whatsapp: "081234567889",
+            sertifikasi: "NDT Level II",
+            status: "Nonaktif",
+            notifikasi: "Belum",
+            npwp: "88.999.000.1-234.000",
+            namaBank: "Bank Mandiri",
+            rekening: "7766554433",
+        },
     ];
 
     const sertifikasiOptions = [
@@ -82,13 +169,21 @@ export default function ManajemenAsessorPage() {
             ? data
             : data.filter((item) => item.sertifikasi === selectedSertifikasi);
 
-    const [searchQuery, setSearchQuery] = useState("");
-
     const searchedData = filteredData.filter(
         (item) =>
             item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const totalPages = Math.ceil(searchedData.length / itemsPerPage);
+    const paginatedData = searchedData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -111,7 +206,10 @@ export default function ManajemenAsessorPage() {
                             </Label>
                             <Select
                                 value={selectedSertifikasi}
-                                onValueChange={setSelectedSertifikasi}
+                                onValueChange={(value) => {
+                                    setSelectedSertifikasi(value);
+                                    setCurrentPage(1);
+                                }}
                             >
                                 <SelectTrigger className="w-[250px] bg-white text-black">
                                     <SelectValue />
@@ -126,7 +224,8 @@ export default function ManajemenAsessorPage() {
                             </Select>
                         </div>
                         <div className="text-sm font-semibold text-white">
-                            Jumlah Asessor: <span className="font-bold">{searchedData.length}</span>
+                            Jumlah Asessor:{" "}
+                            <span className="font-bold">{searchedData.length}</span>
                         </div>
                     </div>
 
@@ -134,7 +233,10 @@ export default function ManajemenAsessorPage() {
                         type="text"
                         placeholder="Cari asessor..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
                         className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
                     />
                 </div>
@@ -157,7 +259,7 @@ export default function ManajemenAsessorPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {searchedData.map((item, idx) => (
+                            {paginatedData.map((item, idx) => (
                                 <tr key={idx} className="border-b hover:bg-gray-50">
                                     <td className="p-4">{item.nip}</td>
                                     <td className="p-4">{item.nama}</td>
@@ -169,14 +271,18 @@ export default function ManajemenAsessorPage() {
                                     <td className="p-4">{item.rekening}</td>
                                     <td className="p-4">
                                         <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}
+                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
+                                                item.status
+                                            )}`}
                                         >
                                             {item.status}
                                         </span>
                                     </td>
                                     <td className="p-4">
                                         <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.notifikasi)}`}
+                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
+                                                item.notifikasi
+                                            )}`}
                                         >
                                             {item.notifikasi}
                                         </span>
@@ -188,14 +294,29 @@ export default function ManajemenAsessorPage() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 py-4">
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                        >
                             &lt;
                         </Button>
-                        <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-                        <Button variant="link" size="sm">02</Button>
-                        <Button variant="link" size="sm">03</Button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <Button
+                                key={i}
+                                size="sm"
+                                variant={currentPage === i + 1 ? "default" : "link"}
+                                className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                onClick={() => handlePageChange(i + 1)}
+                            >
+                                {String(i + 1).padStart(2, "0")}
+                            </Button>
+                        ))}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                        >
                             &gt;
                         </Button>
                     </div>

@@ -15,6 +15,9 @@ import {
 
 export default function ManajemenTrainerPage() {
   const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const data = [
     {
@@ -40,6 +43,102 @@ export default function ManajemenTrainerPage() {
       npwp: "99.888.777.6-543.000",
       namaBank: "BCA",
       rekening: "0987654321",
+    },
+    {
+      nip: "TR003",
+      nama: "Budi Santoso",
+      email: "budi.s@gmail.com",
+      whatsapp: "081234567892",
+      sertifikasi: "K3 Umum",
+      status: "Aktif",
+      notifikasi: "Terkirim",
+      npwp: "12.111.222.3-456.000",
+      namaBank: "BNI",
+      rekening: "2345678910",
+    },
+    {
+      nip: "TR004",
+      nama: "Sari Andini",
+      email: "sari.andini@gmail.com",
+      whatsapp: "081234567893",
+      sertifikasi: "NDT Level II",
+      status: "Aktif",
+      notifikasi: "Belum",
+      npwp: "11.222.333.4-567.000",
+      namaBank: "BRI",
+      rekening: "3456789101",
+    },
+    {
+      nip: "TR005",
+      nama: "Rudi Hartono",
+      email: "rudi.h@gmail.com",
+      whatsapp: "081234567894",
+      sertifikasi: "Welding Inspector (CWI)",
+      status: "Nonaktif",
+      notifikasi: "Terkirim",
+      npwp: "21.321.654.9-321.000",
+      namaBank: "CIMB Niaga",
+      rekening: "4567891011",
+    },
+    {
+      nip: "TR006",
+      nama: "Dewi Lestari",
+      email: "dewi.l@gmail.com",
+      whatsapp: "081234567895",
+      sertifikasi: "K3 Engineering",
+      status: "Aktif",
+      notifikasi: "Belum",
+      npwp: "98.765.432.1-098.000",
+      namaBank: "Bank Mandiri",
+      rekening: "5678910112",
+    },
+    {
+      nip: "TR007",
+      nama: "Joko Widodo",
+      email: "joko.w@gmail.com",
+      whatsapp: "081234567896",
+      sertifikasi: "K3 Umum",
+      status: "Aktif",
+      notifikasi: "Terkirim",
+      npwp: "56.789.123.4-567.000",
+      namaBank: "BCA",
+      rekening: "6789101123",
+    },
+    {
+      nip: "TR008",
+      nama: "Lina Marlina",
+      email: "lina.m@gmail.com",
+      whatsapp: "081234567897",
+      sertifikasi: "K3 Mekanik",
+      status: "Nonaktif",
+      notifikasi: "Belum",
+      npwp: "87.654.321.0-876.000",
+      namaBank: "BRI",
+      rekening: "7891011234",
+    },
+    {
+      nip: "TR009",
+      nama: "Hendra Saputra",
+      email: "hendra.s@gmail.com",
+      whatsapp: "081234567898",
+      sertifikasi: "K3 Engineering",
+      status: "Aktif",
+      notifikasi: "Terkirim",
+      npwp: "65.432.109.8-765.000",
+      namaBank: "BNI",
+      rekening: "8910112345",
+    },
+    {
+      nip: "TR010",
+      nama: "Putri Amelia",
+      email: "putri.a@gmail.com",
+      whatsapp: "081234567899",
+      sertifikasi: "NDT Level II",
+      status: "Nonaktif",
+      notifikasi: "Belum",
+      npwp: "76.543.210.9-876.000",
+      namaBank: "Bank Mandiri",
+      rekening: "9101123456",
     },
   ];
 
@@ -70,13 +169,21 @@ export default function ManajemenTrainerPage() {
       ? data
       : data.filter((item) => item.sertifikasi === selectedSertifikasi);
 
-  const [searchQuery, setSearchQuery] = useState("");
-
   const searchedData = filteredData.filter(
     (item) =>
       item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const totalPages = Math.ceil(searchedData.length / itemsPerPage);
+  const paginatedData = searchedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -96,7 +203,10 @@ export default function ManajemenTrainerPage() {
               </Label>
               <Select
                 value={selectedSertifikasi}
-                onValueChange={setSelectedSertifikasi}
+                onValueChange={(value) => {
+                  setSelectedSertifikasi(value);
+                  setCurrentPage(1);
+                }}
               >
                 <SelectTrigger className="w-[250px] bg-white text-black">
                   <SelectValue />
@@ -119,7 +229,10 @@ export default function ManajemenTrainerPage() {
             type="text"
             placeholder="Cari trainer..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
           />
         </div>
@@ -141,7 +254,7 @@ export default function ManajemenTrainerPage() {
               </tr>
             </thead>
             <tbody>
-              {searchedData.map((item, idx) => (
+              {paginatedData.map((item, idx) => (
                 <tr key={idx} className="border-b hover:bg-gray-50">
                   <td className="p-4">{item.nip}</td>
                   <td className="p-4">{item.nama}</td>
@@ -166,13 +279,21 @@ export default function ManajemenTrainerPage() {
             </tbody>
           </table>
 
+          {/* Pagination */}
           <div className="flex justify-center items-center gap-2 py-4">
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&lt;</Button>
-            <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-            <Button variant="link" size="sm">02</Button>
-            <Button variant="link" size="sm">03</Button>
-            <span className="text-sm text-gray-500">...</span>
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&gt;</Button>
+            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage - 1)}>&lt;</Button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <Button
+                key={i}
+                size="sm"
+                variant={currentPage === i + 1 ? "default" : "link"}
+                className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </Button>
+            ))}
+            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage + 1)}>&gt;</Button>
           </div>
         </div>
       </div>

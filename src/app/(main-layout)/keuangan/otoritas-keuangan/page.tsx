@@ -1,74 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DollarSign, Pencil, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+interface Transaksi {
+    no: number;
+    tanggal: string;
+    deskripsi: string;
+    nominal: number;
+    approval1: string;
+    approval2: string;
+}
+
 export default function OtoritasKeuanganPage() {
     const router = useRouter();
-    const [data, setData] = useState([
-        {
-            no: 1,
-            tanggal: "20 April 2025",
-            deskripsi: "Pembelian peralatan Lab",
-            nominal: 10500000,
-            approval1: "Diterima",
-            approval2: "Diterima",
-        },
-        {
-            no: 2,
-            tanggal: "11 Maret 2025",
-            deskripsi: "Perawatan Mesin",
-            nominal: 5000000,
-            approval1: "Ditolak",
-            approval2: "Diterima",
-        },
-        {
-            no: 3,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Biaya Registrasi Lomba",
-            nominal: 1800000,
-            approval1: "Diterima",
-            approval2: "Ditolak",
-        },
-        {
-            no: 4,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 5800000,
-            approval1: "Diterima",
-            approval2: "Diterima",
-        },
-        {
-            no: 5,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Pengadaan Suku Cadang",
-            nominal: 3500000,
-            approval1: "Diterima",
-            approval2: "Diterima",
-        },
-        {
-            no: 6,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Pengadaan Material Praktikum",
-            nominal: 4000000,
-            approval1: "Ditolak",
-            approval2: "Ditolak",
-        },
-    ]);
 
+    const initialData: Transaksi[] = Array.from({ length: 20 }, (_, i) => ({
+        no: i + 1,
+        tanggal: `2025-06-${String((i % 28) + 1).padStart(2, "0")}`,
+        deskripsi: `Pengeluaran ${i + 1}`,
+        nominal: 1000000 * (i + 1),
+        approval1: i % 3 === 0 ? "Ditolak" : "Diterima",
+        approval2: i % 4 === 0 ? "Ditolak" : "Diterima",
+    }));
 
-    const handleApprovalChange = (index: number, field: "approval1" | "approval2", value: string) => {
+    const [data, setData] = useState<Transaksi[]>(initialData);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
+    const handleApprovalChange = (
+        index: number,
+        field: "approval1" | "approval2",
+        value: string
+    ) => {
         const newData = [...data];
         newData[index][field] = value;
         setData(newData);
     };
 
+    const filteredData = data.filter(
+        (item) =>
+            item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.tanggal.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -109,7 +102,7 @@ export default function OtoritasKeuanganPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((item, i) => (
+                                {paginatedData.map((item, i) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.tanggal}</td>
@@ -118,7 +111,13 @@ export default function OtoritasKeuanganPage() {
                                         <td className="p-4">
                                             <select
                                                 value={item.approval1}
-                                                onChange={(e) => handleApprovalChange(i, "approval1", e.target.value)}
+                                                onChange={(e) =>
+                                                    handleApprovalChange(
+                                                        data.indexOf(item),
+                                                        "approval1",
+                                                        e.target.value
+                                                    )
+                                                }
                                                 className="border border-gray-300 rounded px-2 py-1 text-sm"
                                             >
                                                 <option value="Diterima">Diterima</option>
@@ -128,7 +127,13 @@ export default function OtoritasKeuanganPage() {
                                         <td className="p-4">
                                             <select
                                                 value={item.approval2}
-                                                onChange={(e) => handleApprovalChange(i, "approval2", e.target.value)}
+                                                onChange={(e) =>
+                                                    handleApprovalChange(
+                                                        data.indexOf(item),
+                                                        "approval2",
+                                                        e.target.value
+                                                    )
+                                                }
                                                 className="border border-gray-300 rounded px-2 py-1 text-sm"
                                             >
                                                 <option value="Diterima">Diterima</option>
@@ -167,16 +172,31 @@ export default function OtoritasKeuanganPage() {
 
                         {/* Pagination */}
                         <div className="flex justify-center items-center gap-2 py-4">
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
                                 &lt;
                             </Button>
-                            <Button size="sm" className="bg-red-700 text-white rounded-full h-7 w-7 text-xs font-medium">
-                                01
-                            </Button>
-                            <Button variant="link" size="sm">02</Button>
-                            <Button variant="link" size="sm">03</Button>
-                            <span className="text-sm text-gray-500">...</span>
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button
+                                    key={i}
+                                    size="sm"
+                                    variant={currentPage === i + 1 ? "default" : "link"}
+                                    className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                    onClick={() => handlePageChange(i + 1)}
+                                >
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
                                 &gt;
                             </Button>
                         </div>

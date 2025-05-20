@@ -14,43 +14,36 @@ import {
 
 export default function ManajemenAsetPage() {
     const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     const data = [
-        {
-            no: 1,
-            nama: "Mesin Bubut",
-            tanggal: "20 April 2025",
-            vendor: "PT. Mesin Jaya",
-            satuan: "Unit",
-            stok: 2,
-        },
-        {
-            no: 2,
-            nama: "Oli Hidrolik",
-            tanggal: "09 April 2025",
-            vendor: "PT. Fluida Mesin",
-            satuan: "Liter",
-            stok: 30,
-        },
-        {
-            no: 3,
-            nama: "Baut & Mur",
-            tanggal: "29 April 2025",
-            vendor: "CV. Baja Kuat",
-            satuan: "Pcs",
-            stok: 200,
-        },
-        {
-            no: 4,
-            nama: "Kompresor Udara",
-            tanggal: "09 Mei 2025",
-            vendor: "CV. Udara Power",
-            satuan: "Liter",
-            stok: 30,
-        },
+        { no: 1, nama: "Mesin Bubut", tanggal: "20 April 2025", vendor: "PT. Mesin Jaya", satuan: "Unit", stok: 2 },
+        { no: 2, nama: "Oli Hidrolik", tanggal: "09 April 2025", vendor: "PT. Fluida Mesin", satuan: "Liter", stok: 30 },
+        { no: 3, nama: "Baut & Mur", tanggal: "29 April 2025", vendor: "CV. Baja Kuat", satuan: "Pcs", stok: 200 },
+        { no: 4, nama: "Kompresor Udara", tanggal: "09 Mei 2025", vendor: "CV. Udara Power", satuan: "Liter", stok: 30 },
+        { no: 5, nama: "Bor Duduk", tanggal: "14 Juni 2025", vendor: "UD. Perkakas", satuan: "Unit", stok: 5 },
+        { no: 6, nama: "Bearing SKF", tanggal: "23 Juli 2025", vendor: "PT. Bearing Indo", satuan: "Pcs", stok: 30 },
+        { no: 7, nama: "Tangki Oli", tanggal: "09 Mei 2025", vendor: "PT. Pelumas Indo", satuan: "Liter", stok: 10 },
+        { no: 8, nama: "Gerinda Tangan", tanggal: "12 Juni 2025", vendor: "Toko Teknik Maju", satuan: "Unit", stok: 8 },
+        { no: 9, nama: "Palu Besi", tanggal: "03 Juni 2025", vendor: "CV. Perkakas Kuat", satuan: "Unit", stok: 20 },
+        { no: 10, nama: "Kunci Inggris", tanggal: "21 Juni 2025", vendor: "UD. Peralatan Teknik", satuan: "Unit", stok: 15 },
     ];
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const filteredData = data.filter((item) =>
+        item.nama.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -89,12 +82,15 @@ export default function ManajemenAsetPage() {
                     </CardContent>
                 </Card>
 
-                {/* Baris Bawah: Search */}
+                {/* Search */}
                 <Input
                     type="text"
                     placeholder="Cari aset..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                    }}
                     className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
                 />
 
@@ -116,7 +112,7 @@ export default function ManajemenAsetPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((item) => (
+                                {paginatedData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.nama}</td>
@@ -131,14 +127,29 @@ export default function ManajemenAsetPage() {
 
                         {/* Pagination */}
                         <div className="flex justify-center items-center gap-2 py-4">
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                            >
                                 &lt;
                             </Button>
-                            <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-                            <Button variant="link" size="sm">02</Button>
-                            <Button variant="link" size="sm">03</Button>
-                            <span className="text-sm text-gray-500">...</span>
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button
+                                    key={i}
+                                    size="sm"
+                                    variant={currentPage === i + 1 ? "default" : "link"}
+                                    className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                    onClick={() => handlePageChange(i + 1)}
+                                >
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                            >
                                 &gt;
                             </Button>
                         </div>

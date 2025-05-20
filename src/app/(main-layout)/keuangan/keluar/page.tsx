@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DollarSign, Pencil, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -8,78 +8,86 @@ import { Input } from "@/components/ui/input";
 import {
     Card,
     CardContent,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card";
 import {
     Select,
-    SelectContent,
-    SelectItem,
     SelectTrigger,
     SelectValue,
+    SelectContent,
+    SelectItem,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-
 import { jsPDF } from "jspdf";
+
+interface Pengeluaran {
+    no: number;
+    tanggal: string;
+    deskripsi: string;
+    nominal: number;
+    keterangan: string;
+}
 
 export default function KeuanganKeluarPage() {
     const router = useRouter();
-    const [selectedMonth, setSelectedMonth] = useState("April");
+    const [selectedMonth, setSelectedMonth] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
-    const data = [
-        {
-            no: 1,
-            tanggal: "20 April 2025",
-            deskripsi: "Pembelian peralatan Lab",
-            nominal: 9500000,
-            keterangan: "Pendanaan Alat",
-        },
-        {
-            no: 2,
-            tanggal: "11 Maret 2025",
-            deskripsi: "Perawatan Mesin",
-            nominal: 25000000,
-            keterangan: "Pengembangan Lab",
-        },
-        {
-            no: 3,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Biaya Registrasi Lomba",
-            nominal: 1800000,
-            keterangan: "Pendanaan Kompetisi Inovasi",
-        },
-        {
-            no: 4,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 5800000,
-            keterangan: "Bantuan Pemeliharaan Alat",
-        },
-        {
-            no: 5,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Pengadaan Suku Cadang",
-            nominal: 3500000,
-            keterangan: "Bantuan Peralatan Praktikum",
-        },
-        {
-            no: 6,
-            tanggal: "12 Juni 2025",
-            deskripsi: "Pengadaan Material Praktikum",
-            nominal: 4000000,
-            keterangan: "Pendanaan untuk Penelitian",
-        },
+    const data: Pengeluaran[] = [
+        { no: 1, tanggal: "2025-04-20", deskripsi: "Pembelian Lab", nominal: 9500000, keterangan: "Alat Laboratorium" },
+        { no: 2, tanggal: "2025-03-11", deskripsi: "Perawatan Mesin", nominal: 25000000, keterangan: "Servis Mesin CNC" },
+        { no: 3, tanggal: "2025-06-12", deskripsi: "Biaya Lomba", nominal: 1800000, keterangan: "Inovasi Mahasiswa" },
+        { no: 4, tanggal: "2025-06-13", deskripsi: "Pemeliharaan Alat", nominal: 5800000, keterangan: "Preventive Maintenance" },
+        { no: 5, tanggal: "2025-06-14", deskripsi: "Suku Cadang", nominal: 3500000, keterangan: "Penggantian Sparepart" },
+        { no: 6, tanggal: "2025-06-15", deskripsi: "Material Praktikum", nominal: 4000000, keterangan: "Bahan Praktikum" },
+        { no: 7, tanggal: "2025-05-22", deskripsi: "Maintenance Software", nominal: 8000000, keterangan: "Perpanjangan Lisensi" },
+        { no: 8, tanggal: "2025-05-30", deskripsi: "Pembersihan Lab", nominal: 7000000, keterangan: "Cleaning Service" },
+        { no: 9, tanggal: "2025-07-01", deskripsi: "Upgrade Jaringan", nominal: 12000000, keterangan: "Infrastruktur IT" },
+        { no: 10, tanggal: "2025-07-03", deskripsi: "Pelatihan SDM", nominal: 9500000, keterangan: "Workshop Internal" },
     ];
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const monthNameToNumber: Record<string, number> = {
+        Januari: 1, Februari: 2, Maret: 3, April: 4, Mei: 5,
+        Juni: 6, Juli: 7, Agustus: 8, September: 9, Oktober: 10,
+        November: 11, Desember: 12,
+    };
 
-    const previewExpenseInvoicePDF = (transaction: any) => {
+    const filterByMonth = (data: Pengeluaran[]) => {
+        if (selectedMonth === "Semua") return data;
+        const monthNumber = monthNameToNumber[selectedMonth];
+        return data.filter((item) => {
+            const date = new Date(item.tanggal);
+            return date.getMonth() + 1 === monthNumber;
+        });
+    };
+
+    const filteredData = filterByMonth(data).filter(
+        (item) =>
+            item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.keterangan.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedMonth]);
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
+    // Fungsi PDF tidak diubah
+    const previewExpenseInvoicePDF = (transaction: Pengeluaran) => {
         const doc = new jsPDF();
-
         const marginX = 20;
         let currentY = 20;
 
-        // Header
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
         doc.text("UNIVERSITAS MUHAMMADIYAH YOGYAKARTA", 105, currentY, { align: "center" });
@@ -93,19 +101,17 @@ export default function KeuanganKeluarPage() {
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        // Judul
-        doc.setFontSize(16);
         doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
         doc.text("INVOICE PENGELUARAN DANA", 105, currentY, { align: "center" });
         currentY += 10;
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        // Data pengeluaran
-        doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
 
-        const data = [
+        const info = [
             ["Tanggal", transaction.tanggal],
             ["Deskripsi", transaction.deskripsi],
             ["Nominal", `Rp ${transaction.nominal.toLocaleString()}`],
@@ -115,7 +121,7 @@ export default function KeuanganKeluarPage() {
         const labelX = marginX;
         const valueX = marginX + 45;
 
-        data.forEach(([label, value]) => {
+        info.forEach(([label, value]) => {
             doc.text(`${label}`, labelX, currentY);
             doc.text(":", labelX + 30, currentY);
             doc.text(`${value}`, valueX, currentY);
@@ -126,21 +132,19 @@ export default function KeuanganKeluarPage() {
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        const printedDate = new Date().toLocaleDateString();
-        doc.text(`Yogyakarta, ${printedDate}`, 140, currentY);
+        doc.text(`Yogyakarta, ${new Date().toLocaleDateString()}`, 140, currentY);
         currentY += 25;
         doc.text("________________________", 140, currentY);
         currentY += 7;
         doc.text("Tanda Tangan", 155, currentY);
 
         const blob = doc.output("blob");
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, "_blank");
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <DollarSign className="w-5 h-5" />
@@ -148,51 +152,38 @@ export default function KeuanganKeluarPage() {
                 </div>
             </div>
 
-            {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-
-
-                {/* Filter dan Tambah */}
+                {/* Filter */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Button */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
-                            <Label htmlFor="bulan" className="text-white">
-                                Bulan:
-                            </Label>
+                            <Label htmlFor="bulan" className="text-white">Bulan:</Label>
                             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                                <SelectTrigger className="w-[140px] bg-white text-black">
+                                <SelectTrigger className="w-[160px] bg-white text-black">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="April">April</SelectItem>
-                                    <SelectItem value="Mei">Mei</SelectItem>
-                                    <SelectItem value="Juni">Juni</SelectItem>
-                                    <SelectItem value="Juli">Juli</SelectItem>
-                                    <SelectItem value="Agustus">Agustus</SelectItem>
+                                    <SelectItem value="Semua">Semua</SelectItem>
+                                    {Object.keys(monthNameToNumber).map((bulan) => (
+                                        <SelectItem key={bulan} value={bulan}>{bulan}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
-
-                        <Button
-                            onClick={() => router.push("/keuangan/keluar/add")}
-                            className="bg-blue-600 text-white"
-                        >
+                        <Button onClick={() => router.push("/keuangan/keluar/add")} className="bg-blue-600 text-white">
                             + Tambah Transaksi
                         </Button>
                     </div>
 
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari transaksi..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                        className="w-full h-10 px-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-md"
                     />
                 </div>
 
-                {/* Tabel */}
                 <Card>
                     <CardContent className="overflow-auto px-0">
                         <table className="w-full text-sm text-left">
@@ -203,12 +194,12 @@ export default function KeuanganKeluarPage() {
                                     <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Nominal</th>
                                     <th className="p-4">Keterangan</th>
-                                    <th className="p-4">Receipt</th>
+                                    <th className="p-4">Invoice</th>
                                     <th className="p-4">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((item) => (
+                                {paginatedData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.tanggal}</td>
@@ -219,26 +210,17 @@ export default function KeuanganKeluarPage() {
                                             <Button
                                                 variant="outline"
                                                 size="icon"
-                                                className="bg-gray-100 hover:bg-gray-200"
                                                 onClick={() => previewExpenseInvoicePDF(item)}
+                                                className="bg-gray-100 hover:bg-gray-200"
                                             >
                                                 <Upload size={16} />
                                             </Button>
-
                                         </td>
                                         <td className="p-4 flex items-center gap-2">
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
-                                            >
+                                            <Button size="icon" variant="ghost" className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600">
                                                 <Pencil size={16} />
                                             </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="bg-red-100 hover:bg-red-200 text-red-600"
-                                            >
+                                            <Button size="icon" variant="ghost" className="bg-red-100 hover:bg-red-200 text-red-600">
                                                 <Trash2 size={16} />
                                             </Button>
                                         </td>
@@ -246,23 +228,28 @@ export default function KeuanganKeluarPage() {
                                 ))}
                             </tbody>
                         </table>
-                    </CardContent>
 
-                    {/* Pagination */}
-                    <div className="flex justify-center items-center gap-2 py-4">
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
-                            &lt;
-                        </Button>
-                        <Button size="sm" className="bg-red-700 text-white rounded-full h-7 w-7 text-xs font-medium">
-                            01
-                        </Button>
-                        <Button variant="link" size="sm">02</Button>
-                        <Button variant="link" size="sm">03</Button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
-                            &gt;
-                        </Button>
-                    </div>
+                        {/* Pagination */}
+                        <div className="flex justify-center items-center gap-2 py-4">
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                                &lt;
+                            </Button>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button
+                                    key={i}
+                                    size="sm"
+                                    variant={currentPage === i + 1 ? "default" : "link"}
+                                    className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                    onClick={() => handlePageChange(i + 1)}
+                                >
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                                &gt;
+                            </Button>
+                        </div>
+                    </CardContent>
                 </Card>
             </div>
         </div>

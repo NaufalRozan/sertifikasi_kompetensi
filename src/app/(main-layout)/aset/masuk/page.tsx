@@ -16,9 +16,16 @@ import {
 
 export default function AsetMasukPage() {
     const router = useRouter();
-    const [selectedMonth, setSelectedMonth] = useState("Juni");
+    const [selectedMonth, setSelectedMonth] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
-    // bagian data
+    const allMonths = [
+        "Semua", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
     const data = [
         {
             no: 1,
@@ -104,10 +111,65 @@ export default function AsetMasukPage() {
             kondisi: "Rusak",
             harga: "Rp 1.000.000",
         },
+        {
+            no: 8,
+            nama: "Kunci Inggris",
+            tanggal: "05 Juni 2025",
+            vendor: "Toko Teknik Maju",
+            stok: 15,
+            satuan: "Unit",
+            expired: "-",
+            lokasi: "Rak A1",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 250.000",
+        },
+        {
+            no: 9,
+            nama: "Palu Besi",
+            tanggal: "18 Juni 2025",
+            vendor: "CV. Baja Kuat",
+            stok: 10,
+            satuan: "Unit",
+            expired: "-",
+            lokasi: "Rak B1",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 150.000",
+        },
+        {
+            no: 10,
+            nama: "Tang Kombinasi",
+            tanggal: "25 Juni 2025",
+            vendor: "UD. Perkakas",
+            stok: 12,
+            satuan: "Unit",
+            expired: "-",
+            lokasi: "Rak A3",
+            kondisi: "Tidak Rusak",
+            harga: "Rp 120.000",
+        },
     ];
 
+    const filteredData = data.filter((item) => {
+        const matchMonth =
+            selectedMonth === "Semua" ||
+            item.tanggal.toLowerCase().includes(selectedMonth.toLowerCase());
 
-    const [searchQuery, setSearchQuery] = useState("");
+        const matchSearch =
+            item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.vendor.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchMonth && matchSearch;
+    });
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -123,25 +185,29 @@ export default function AsetMasukPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-
                 {/* Filter dan Tambah */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Button */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
                             <Label htmlFor="bulan" className="text-white">
                                 Bulan:
                             </Label>
-                            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                                <SelectTrigger className="w-[140px] bg-white text-black">
+                            <Select
+                                value={selectedMonth}
+                                onValueChange={(value) => {
+                                    setSelectedMonth(value);
+                                    setCurrentPage(1);
+                                }}
+                            >
+                                <SelectTrigger className="w-[160px] bg-white text-black">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="April">April</SelectItem>
-                                    <SelectItem value="Mei">Mei</SelectItem>
-                                    <SelectItem value="Juni">Juni</SelectItem>
-                                    <SelectItem value="Juli">Juli</SelectItem>
-                                    <SelectItem value="Agustus">Agustus</SelectItem>
+                                    {allMonths.map((month) => (
+                                        <SelectItem key={month} value={month}>
+                                            {month}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -154,16 +220,17 @@ export default function AsetMasukPage() {
                         </Button>
                     </div>
 
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari aset..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
                         className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
                     />
                 </div>
-
 
                 {/* Tabel */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
@@ -184,7 +251,7 @@ export default function AsetMasukPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((item) => (
+                            {paginatedData.map((item) => (
                                 <tr key={item.no} className="border-b hover:bg-gray-50">
                                     <td className="p-4">{item.no}</td>
                                     <td className="p-4">{item.nama}</td>
@@ -219,14 +286,29 @@ export default function AsetMasukPage() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 py-4">
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                        >
                             &lt;
                         </Button>
-                        <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-                        <Button variant="link" size="sm">02</Button>
-                        <Button variant="link" size="sm">03</Button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <Button
+                                key={i}
+                                size="sm"
+                                variant={currentPage === i + 1 ? "default" : "link"}
+                                className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                onClick={() => handlePageChange(i + 1)}
+                            >
+                                {String(i + 1).padStart(2, "0")}
+                            </Button>
+                        ))}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                        >
                             &gt;
                         </Button>
                     </div>

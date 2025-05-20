@@ -14,6 +14,9 @@ import {
 
 export default function ManajemenHRDPage() {
     const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     const data = [
         { no: 1, nama: "Ahmad Zaky", peran: "Peserta", unit: "Divisi A" },
@@ -21,13 +24,26 @@ export default function ManajemenHRDPage() {
         { no: 3, nama: "Budi Santoso", peran: "Pengurus", unit: "Divisi C" },
         { no: 4, nama: "Tari Widya", peran: "Struktur", unit: "Divisi D" },
         { no: 5, nama: "Anwar Yusuf", peran: "Asessor", unit: "Divisi E" },
+        { no: 6, nama: "Lia Amalia", peran: "Trainer", unit: "Divisi F" },
+        { no: 7, nama: "Fahmi Rahman", peran: "Peserta", unit: "Divisi A" },
+        { no: 8, nama: "Dian Sari", peran: "Struktur", unit: "Divisi G" },
+        { no: 9, nama: "Yusuf Hidayat", peran: "Pengurus", unit: "Divisi H" },
+        { no: 10, nama: "Nina Syafira", peran: "Asessor", unit: "Divisi I" },
     ];
-
-    const [searchQuery, setSearchQuery] = useState("");
 
     const filteredData = data.filter((item) =>
         item.nama.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -76,7 +92,10 @@ export default function ManajemenHRDPage() {
                     type="text"
                     placeholder="Cari nama..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                    }}
                     className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
                 />
 
@@ -96,7 +115,7 @@ export default function ManajemenHRDPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredData.map((item) => (
+                                {paginatedData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.nama}</td>
@@ -109,14 +128,29 @@ export default function ManajemenHRDPage() {
 
                         {/* Pagination */}
                         <div className="flex justify-center items-center gap-2 py-4">
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                            >
                                 &lt;
                             </Button>
-                            <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-                            <Button variant="link" size="sm">02</Button>
-                            <Button variant="link" size="sm">03</Button>
-                            <span className="text-sm text-gray-500">...</span>
-                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button
+                                    key={i}
+                                    size="sm"
+                                    variant={currentPage === i + 1 ? "default" : "link"}
+                                    className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                    onClick={() => handlePageChange(i + 1)}
+                                >
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                            >
                                 &gt;
                             </Button>
                         </div>

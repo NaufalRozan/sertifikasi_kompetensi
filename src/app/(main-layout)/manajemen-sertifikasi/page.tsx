@@ -17,6 +17,9 @@ import { Label } from "@/components/ui/label";
 export default function SertifikasiPage() {
     const router = useRouter();
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     const data = [
         { no: 1, kode: "CERT-011", nama: "K3 Mekanik", tersertifikasi: 15, terdaftar: 36 },
@@ -25,16 +28,32 @@ export default function SertifikasiPage() {
         { no: 4, kode: "CERT-014", nama: "K3 Umum", tersertifikasi: 19, terdaftar: 22 },
         { no: 5, kode: "CERT-015", nama: "Welding Inspector (CWI)", tersertifikasi: 27, terdaftar: 31 },
         { no: 6, kode: "CERT-016", nama: "NDT Level II", tersertifikasi: 28, terdaftar: 29 },
+        { no: 7, kode: "CERT-017", nama: "ISO 9001 Auditor", tersertifikasi: 12, terdaftar: 18 },
+        { no: 8, kode: "CERT-018", nama: "ISO 14001 Auditor", tersertifikasi: 14, terdaftar: 20 },
+        { no: 9, kode: "CERT-019", nama: "First Aid Training", tersertifikasi: 17, terdaftar: 24 },
+        { no: 10, kode: "CERT-020", nama: "Fire Safety", tersertifikasi: 16, terdaftar: 22 },
     ];
 
     const uniqueNama = Array.from(new Set(data.map((item) => item.nama)));
 
-    const filteredData =
-        selectedSertifikasi === "Semua"
-            ? data
-            : data.filter((item) => item.nama === selectedSertifikasi);
+    const filteredData = data.filter((item) => {
+        const matchesNama =
+            selectedSertifikasi === "Semua" || item.nama === selectedSertifikasi;
+        const matchesSearch =
+            item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.kode.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesNama && matchesSearch;
+    });
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -50,13 +69,12 @@ export default function SertifikasiPage() {
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
                 {/* Filter dan Tambah */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Button */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
                             <Label htmlFor="sertifikasi" className="text-white whitespace-nowrap">
                                 Nama Sertifikasi:
                             </Label>
-                            <Select value={selectedSertifikasi} onValueChange={setSelectedSertifikasi}>
+                            <Select value={selectedSertifikasi} onValueChange={(value) => { setSelectedSertifikasi(value); setCurrentPage(1); }}>
                                 <SelectTrigger className="w-[250px] bg-white text-black">
                                     <SelectValue />
                                 </SelectTrigger>
@@ -70,7 +88,6 @@ export default function SertifikasiPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <Button
                             onClick={() => router.push("/manajemen-sertifikasi/add")}
                             className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
@@ -78,18 +95,16 @@ export default function SertifikasiPage() {
                             + Tambah Sertifikasi
                         </Button>
                     </div>
-
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari sertifikasi..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                         className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
                     />
                 </div>
 
-                {/* Tabel Sertifikasi */}
+                {/* Tabel */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                     <table className="w-full text-sm text-left">
                         <thead className="text-red-700 font-semibold border-b">
@@ -103,7 +118,7 @@ export default function SertifikasiPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredData.map((item) => (
+                            {paginatedData.map((item) => (
                                 <tr key={item.no} className="border-b hover:bg-gray-50">
                                     <td className="p-4">{item.no}</td>
                                     <td className="p-4">{item.kode}</td>
@@ -111,18 +126,10 @@ export default function SertifikasiPage() {
                                     <td className="p-4">{item.tersertifikasi}</td>
                                     <td className="p-4">{item.terdaftar}</td>
                                     <td className="p-4 flex items-center gap-2">
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
-                                        >
+                                        <Button size="icon" variant="ghost" className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600">
                                             <Pencil size={16} />
                                         </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="bg-red-100 hover:bg-red-200 text-red-600"
-                                        >
+                                        <Button size="icon" variant="ghost" className="bg-red-100 hover:bg-red-200 text-red-600">
                                             <Trash2 size={16} />
                                         </Button>
                                     </td>
@@ -133,12 +140,19 @@ export default function SertifikasiPage() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 py-4">
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&lt;</Button>
-                        <Button size="sm" className="bg-red-700 text-white text-xs">01</Button>
-                        <Button variant="link" size="sm">02</Button>
-                        <Button variant="link" size="sm">03</Button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">&gt;</Button>
+                        <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage - 1)}>&lt;</Button>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <Button
+                                key={i}
+                                size="sm"
+                                variant={currentPage === i + 1 ? "default" : "link"}
+                                className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                onClick={() => handlePageChange(i + 1)}
+                            >
+                                {String(i + 1).padStart(2, "0")}
+                            </Button>
+                        ))}
+                        <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage + 1)}>&gt;</Button>
                     </div>
                 </div>
             </div>

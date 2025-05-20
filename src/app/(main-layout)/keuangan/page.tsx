@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DollarSign, Pencil, Trash2, TrendingUp } from "lucide-react";
 
@@ -37,42 +37,24 @@ import {
 
 export default function ManajemenKeuanganPage() {
     const router = useRouter();
-
-    const transaksi = [
-        {
-            no: 1,
-            tanggal: "2025-04-20",
-            jenis: "Masuk",
-            sumber: "Universitas Muhammadiyah Yogyakarta",
-            deskripsi: "Pendanaan Alat",
-            nominal: 25000000,
-            status: "Diterima",
-            receipt: true,
-        },
-        {
-            no: 2,
-            tanggal: "2025-06-20",
-            jenis: "Keluar",
-            sumber: "Peralatan CNC",
-            deskripsi: "Pembelian Peralatan Lab CNC",
-            nominal: 4500000,
-            status: "Belum",
-            receipt: false,
-        },
-        {
-            no: 3,
-            tanggal: "2025-04-10",
-            jenis: "Keluar",
-            sumber: "Perawatan Mesin",
-            deskripsi: "Biaya perawatan mesin uji tarik",
-            nominal: 2000000,
-            status: "Diterima",
-            receipt: true,
-        },
-    ];
+    const itemsPerPage = 5;
 
     const [searchQuery, setSearchQuery] = useState("");
     const [periode, setPeriode] = useState("Bulan");
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const transaksi = [
+        { no: 1, tanggal: "2025-01-10", jenis: "Masuk", sumber: "Sponsor A", deskripsi: "Pendanaan alat lab", nominal: 15000000, status: "Diterima", receipt: true },
+        { no: 2, tanggal: "2025-02-14", jenis: "Keluar", sumber: "Pembelian Laptop", deskripsi: "Laptop untuk staf laboratorium", nominal: 7000000, status: "Diterima", receipt: true },
+        { no: 3, tanggal: "2025-03-02", jenis: "Masuk", sumber: "Universitas XYZ", deskripsi: "Pendanaan operasional", nominal: 10000000, status: "Diterima", receipt: true },
+        { no: 4, tanggal: "2025-04-10", jenis: "Keluar", sumber: "Servis Mesin", deskripsi: "Biaya perawatan mesin bubut", nominal: 3000000, status: "Belum", receipt: false },
+        { no: 5, tanggal: "2025-04-20", jenis: "Masuk", sumber: "UMY", deskripsi: "Pendanaan alat", nominal: 25000000, status: "Diterima", receipt: true },
+        { no: 6, tanggal: "2025-05-15", jenis: "Keluar", sumber: "Pengeluaran Workshop", deskripsi: "Material pelatihan", nominal: 5000000, status: "Diterima", receipt: true },
+        { no: 7, tanggal: "2025-06-10", jenis: "Keluar", sumber: "Peralatan CNC", deskripsi: "Alat CNC portable", nominal: 4500000, status: "Belum", receipt: false },
+        { no: 8, tanggal: "2025-06-15", jenis: "Masuk", sumber: "PT. Teknik Nusantara", deskripsi: "Donasi alat praktik", nominal: 12000000, status: "Diterima", receipt: true },
+        { no: 9, tanggal: "2025-07-05", jenis: "Keluar", sumber: "Perawatan Gedung", deskripsi: "AC & listrik", nominal: 3500000, status: "Diterima", receipt: true },
+        { no: 10, tanggal: "2025-07-18", jenis: "Masuk", sumber: "Universitas ABC", deskripsi: "Dana pelatihan K3", nominal: 8000000, status: "Diterima", receipt: true },
+    ];
 
     const filteredTransaksi = transaksi.filter(
         (item) =>
@@ -80,14 +62,22 @@ export default function ManajemenKeuanganPage() {
             item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const totalMasuk = transaksi
-        .filter((t) => t.jenis === "Masuk")
-        .reduce((sum, t) => sum + t.nominal, 0);
+    const paginatedTransaksi = filteredTransaksi.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
-    const totalKeluar = transaksi
-        .filter((t) => t.jenis === "Keluar")
-        .reduce((sum, t) => sum + t.nominal, 0);
+    const totalPages = Math.ceil(filteredTransaksi.length / itemsPerPage);
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
+
+    const totalMasuk = transaksi.filter(t => t.jenis === "Masuk").reduce((sum, t) => sum + t.nominal, 0);
+    const totalKeluar = transaksi.filter(t => t.jenis === "Keluar").reduce((sum, t) => sum + t.nominal, 0);
     const totalSaldo = totalMasuk - totalKeluar;
     const statusKeuangan = totalSaldo >= 0 ? "Keuntungan" : "Kerugian";
 
@@ -96,7 +86,6 @@ export default function ManajemenKeuanganPage() {
         const now = new Date();
         const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
-
         if (periode === "Bulan") {
             return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
         } else if (periode === "6 Bulan") {
@@ -108,30 +97,15 @@ export default function ManajemenKeuanganPage() {
         return true;
     };
 
-    const filteredByPeriode = transaksi.filter((t) =>
-        filterByPeriode(t.tanggal)
-    );
-
-    const totalMasukPeriode = filteredByPeriode
-        .filter((t) => t.jenis === "Masuk")
-        .reduce((sum, t) => sum + t.nominal, 0);
-
-    const totalKeluarPeriode = filteredByPeriode
-        .filter((t) => t.jenis === "Keluar")
-        .reduce((sum, t) => sum + t.nominal, 0);
-
+    const filteredByPeriode = transaksi.filter((t) => filterByPeriode(t.tanggal));
+    const totalMasukPeriode = filteredByPeriode.filter((t) => t.jenis === "Masuk").reduce((sum, t) => sum + t.nominal, 0);
+    const totalKeluarPeriode = filteredByPeriode.filter((t) => t.jenis === "Keluar").reduce((sum, t) => sum + t.nominal, 0);
     const saldoPeriode = totalMasukPeriode - totalKeluarPeriode;
     const statusPeriode = saldoPeriode >= 0 ? "Keuntungan" : "Kerugian";
 
     const chartConfig = {
-        masuk: {
-            label: "Pemasukan",
-            color: "#3B82F6",
-        },
-        keluar: {
-            label: "Pengeluaran",
-            color: "#EF4444",
-        },
+        masuk: { label: "Pemasukan", color: "#3B82F6" },
+        keluar: { label: "Pengeluaran", color: "#EF4444" },
     } satisfies ChartConfig;
 
     const generateChartData = () => {
@@ -139,92 +113,50 @@ export default function ManajemenKeuanganPage() {
         const currentYear = now.getFullYear();
 
         if (periode === "Bulan") {
-            // Siapkan label bulan tetap
-            const months = [
-                "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-                "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
-            ];
-
-            // Inisialisasi data kosong
-            const data = months.map((bulan) => ({
-                label: bulan,
-                masuk: 0,
-                keluar: 0,
-            }));
-
-            // Isi data berdasarkan transaksi
+            const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+            const data = months.map((bulan) => ({ label: bulan, masuk: 0, keluar: 0 }));
             transaksi.forEach((t) => {
                 const date = new Date(t.tanggal);
                 if (date.getFullYear() === currentYear) {
                     const index = date.getMonth();
-                    if (t.jenis === "Masuk") {
-                        data[index].masuk += t.nominal;
-                    } else {
-                        data[index].keluar += t.nominal;
-                    }
+                    if (t.jenis === "Masuk") data[index].masuk += t.nominal;
+                    else data[index].keluar += t.nominal;
                 }
             });
-
             return data;
-
         } else if (periode === "6 Bulan") {
             const semesters = [
                 { label: "Semester Ganjil", months: [0, 1, 2, 3, 4, 5] },
                 { label: "Semester Genap", months: [6, 7, 8, 9, 10, 11] },
             ];
-
-            const data = semesters.map((s) => ({
-                label: s.label,
-                masuk: 0,
-                keluar: 0,
-            }));
-
+            const data = semesters.map((s) => ({ label: s.label, masuk: 0, keluar: 0 }));
             transaksi.forEach((t) => {
                 const date = new Date(t.tanggal);
                 if (date.getFullYear() === currentYear) {
                     const semesterIndex = date.getMonth() < 6 ? 0 : 1;
-                    if (t.jenis === "Masuk") {
-                        data[semesterIndex].masuk += t.nominal;
-                    } else {
-                        data[semesterIndex].keluar += t.nominal;
-                    }
+                    if (t.jenis === "Masuk") data[semesterIndex].masuk += t.nominal;
+                    else data[semesterIndex].keluar += t.nominal;
                 }
             });
-
             return data;
-
-        } else if (periode === "Tahun") {
+        } else {
             const startYear = 2020;
             const endYear = currentYear;
             const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
-
-            const data = years.map((year) => ({
-                label: year.toString(),
-                masuk: 0,
-                keluar: 0,
-            }));
-
+            const data = years.map((year) => ({ label: year.toString(), masuk: 0, keluar: 0 }));
             transaksi.forEach((t) => {
                 const date = new Date(t.tanggal);
                 const yearIndex = date.getFullYear() - startYear;
                 if (yearIndex >= 0 && yearIndex < data.length) {
-                    if (t.jenis === "Masuk") {
-                        data[yearIndex].masuk += t.nominal;
-                    } else {
-                        data[yearIndex].keluar += t.nominal;
-                    }
+                    if (t.jenis === "Masuk") data[yearIndex].masuk += t.nominal;
+                    else data[yearIndex].keluar += t.nominal;
                 }
             });
-
             return data;
         }
-
-        return [];
     };
 
-
     const chartData = generateChartData();
-
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -238,58 +170,24 @@ export default function ManajemenKeuanganPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative space-y-6 px-4 pb-10">
-                {/* Admin Menu */}
-                <div className="flex justify-end">
-                    <Button
-                        onClick={() => router.push("/keuangan/admin")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                        Admin Menu
-                    </Button>
-                </div>
-
-                {/* Card: Saldo & Menu */}
+                {/* Saldo */}
                 <Card className="flex flex-col lg:flex-row justify-between items-center gap-6 p-6">
                     <div className="flex flex-col gap-4 text-red-700 w-full lg:w-[70%]">
-                        <div className="text-xl font-bold">
-                            TOTAL SALDO:{" "}
-                            <span className="text-2xl">
-                                Rp {totalSaldo.toLocaleString()}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <span className="w-24 font-semibold">Pemasukan</span>
-                            <div className="flex-1 h-4 rounded-full bg-gradient-to-r from-white via-red-200 to-red-700" />
-                            <span className="w-28 text-end font-semibold">
-                                Rp {totalMasuk.toLocaleString()}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <span className="w-24 font-semibold">Pengeluaran</span>
-                            <div className="flex-1 h-4 rounded-full bg-gradient-to-r from-white via-red-200 to-red-700 opacity-70" />
-                            <span className="w-28 text-end font-semibold">
-                                Rp {totalKeluar.toLocaleString()}
-                            </span>
-                        </div>
-                        <div
-                            className={`text-md font-semibold mt-2 ${totalSaldo >= 0 ? "text-green-600" : "text-red-600"
-                                }`}
-                        >
-                            Status Cashflow: <span className="font-bold">{statusKeuangan}</span>
-                        </div>
+                        <div className="text-xl font-bold">TOTAL SALDO: <span className="text-2xl">Rp {totalSaldo.toLocaleString()}</span></div>
+                        <div className="flex items-center gap-4"><span className="w-24 font-semibold">Pemasukan</span><div className="flex-1 h-4 rounded-full bg-blue-200" /><span className="w-28 text-end font-semibold">Rp {totalMasuk.toLocaleString()}</span></div>
+                        <div className="flex items-center gap-4"><span className="w-24 font-semibold">Pengeluaran</span><div className="flex-1 h-4 rounded-full bg-red-200" /><span className="w-28 text-end font-semibold">Rp {totalKeluar.toLocaleString()}</span></div>
+                        <div className={`text-md font-semibold mt-2 ${totalSaldo >= 0 ? "text-green-600" : "text-red-600"}`}>Status Cashflow: <span className="font-bold">{statusKeuangan}</span></div>
                     </div>
-
                     <div className="h-[120px] w-px bg-gray-300 hidden lg:block" />
-
                     <div className="flex flex-col items-center justify-center text-red-700 gap-2 w-full lg:w-1/4">
                         <p className="text-md font-semibold">Menu Lainnya</p>
-                        <Button onClick={() => router.push("/keuangan/masuk")} className="w-full bg-blue-600">Transaksi Masuk</Button>
-                        <Button onClick={() => router.push("/keuangan/keluar")} className="w-full bg-blue-600">Transaksi Keluar</Button>
-                        <Button onClick={() => router.push("/keuangan/cashflow")} className="w-full bg-blue-600">Cashflow</Button>
+                        <Button className="w-full bg-blue-600">Transaksi Masuk</Button>
+                        <Button className="w-full bg-blue-600">Transaksi Keluar</Button>
+                        <Button className="w-full bg-blue-600">Cashflow</Button>
                     </div>
                 </Card>
 
-                {/* Card: Statistik Laba/Rugi Periode */}
+                {/* Statistik */}
                 <Card className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <CardTitle className="text-red-700 text-lg">Statistik Laba/Rugi (Berdasarkan Periode)</CardTitle>
@@ -304,19 +202,14 @@ export default function ManajemenKeuanganPage() {
                             </SelectContent>
                         </Select>
                     </div>
-
                     <div className="space-y-2 text-sm text-gray-700">
-                        <div><span className="font-medium">Total Pemasukan:</span> <span className="text-green-600 font-semibold">Rp {totalMasukPeriode.toLocaleString()}</span></div>
-                        <div><span className="font-medium">Total Pengeluaran:</span> <span className="text-red-600 font-semibold">Rp {totalKeluarPeriode.toLocaleString()}</span></div>
-                        <div><span className="font-medium">Status:</span>{" "}
-                            <span className={`font-bold ${saldoPeriode >= 0 ? "text-green-700" : "text-red-700"}`}>
-                                {statusPeriode} (Rp {Math.abs(saldoPeriode).toLocaleString()})
-                            </span>
-                        </div>
+                        <div><strong>Total Pemasukan:</strong> Rp {totalMasukPeriode.toLocaleString()}</div>
+                        <div><strong>Total Pengeluaran:</strong> Rp {totalKeluarPeriode.toLocaleString()}</div>
+                        <div><strong>Status:</strong> <span className={saldoPeriode >= 0 ? "text-green-600 font-bold" : "text-red-600 font-bold"}>{statusPeriode} (Rp {Math.abs(saldoPeriode).toLocaleString()})</span></div>
                     </div>
                 </Card>
 
-                {/* Chart */}
+                {/* Grafik */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Statistik Grafik Keuangan</CardTitle>
@@ -325,31 +218,17 @@ export default function ManajemenKeuanganPage() {
                         <ChartContainer config={chartConfig}>
                             <BarChart data={chartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis
-                                    dataKey="label"
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickMargin={10}
-                                />
-
-                                <YAxis
-                                    tickFormatter={(value) => `Rp ${value / 1_000_000}jt`}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    width={80}
-                                />
+                                <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} />
+                                <YAxis tickFormatter={(value) => `Rp ${value / 1_000_000}jt`} tickLine={false} axisLine={false} width={80} />
                                 <ChartTooltip content={<ChartTooltipContent indicator="dashed" />} />
                                 <Bar dataKey="masuk" fill="#3B82F6" radius={4} />
                                 <Bar dataKey="keluar" fill="#EF4444" radius={4} />
                             </BarChart>
                         </ChartContainer>
-
                     </CardContent>
                     <CardFooter className="flex-col items-start gap-2 text-sm">
-                        <div className="flex gap-2 font-medium leading-none">
-                            Tren Keuangan Stabil <TrendingUp className="h-4 w-4" />
-                        </div>
-                        <p className="text-muted-foreground">Data Januari - Juni 2025</p>
+                        <div className="flex gap-2 font-medium leading-none">Tren Keuangan Stabil <TrendingUp className="h-4 w-4" /></div>
+                        <p className="text-muted-foreground">Data Januari - Juli 2025</p>
                     </CardFooter>
                 </Card>
 
@@ -359,7 +238,7 @@ export default function ManajemenKeuanganPage() {
                     placeholder="Cari transaksi..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                    className="w-full h-10 px-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-md"
                 />
 
                 {/* Table */}
@@ -370,8 +249,8 @@ export default function ManajemenKeuanganPage() {
                                 <tr>
                                     <th className="p-4">No</th>
                                     <th className="p-4">Tanggal</th>
-                                    <th className="p-4">Jenis Transaksi</th>
-                                    <th className="p-4">Sumber/Destinasi</th>
+                                    <th className="p-4">Jenis</th>
+                                    <th className="p-4">Sumber</th>
                                     <th className="p-4">Deskripsi</th>
                                     <th className="p-4">Nominal</th>
                                     <th className="p-4">Status</th>
@@ -380,7 +259,7 @@ export default function ManajemenKeuanganPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredTransaksi.map((item) => (
+                                {paginatedTransaksi.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.tanggal}</td>
@@ -394,11 +273,7 @@ export default function ManajemenKeuanganPage() {
                                             </span>
                                         </td>
                                         <td className="p-4">
-                                            {item.receipt ? (
-                                                <Button variant="secondary" className="text-xs px-3 py-1">Lihat Bukti</Button>
-                                            ) : (
-                                                <span className="text-gray-400 text-xs">-</span>
-                                            )}
+                                            {item.receipt ? <Button variant="secondary" className="text-xs">Lihat Bukti</Button> : <span className="text-xs text-gray-400">-</span>}
                                         </td>
                                         <td className="p-4 flex items-center gap-2">
                                             <Button size="icon" variant="ghost" className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"><Pencil size={16} /></Button>
@@ -408,6 +283,17 @@ export default function ManajemenKeuanganPage() {
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* Pagination */}
+                        <div className="flex justify-center items-center gap-2 py-4">
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>&lt;</Button>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button key={i} size="sm" variant={currentPage === i + 1 ? "default" : "link"} className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""} onClick={() => handlePageChange(i + 1)}>
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>&gt;</Button>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

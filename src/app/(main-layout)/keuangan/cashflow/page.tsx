@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DollarSign, Pencil, Trash2 } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,39 +25,30 @@ export default function TransaksiSemuaPage() {
         return String(now.getMonth() + 1).padStart(2, "0"); // ex: "04"
     });
 
-
     const transaksiMasuk = [
-        {
-            tanggal: "20 April 2025",
-            jenis: "Masuk",
-            pihak: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 9500000,
-            keterangan: "Pendanaan Alat",
-        },
-        {
-            tanggal: "11 Maret 2025",
-            jenis: "Masuk",
-            pihak: "Kementrian Pendidikan",
-            nominal: 25000000,
-            keterangan: "Pengembangan Lab",
-        },
+        { tanggal: "2025-01-15", jenis: "Masuk", pihak: "Donatur A", nominal: 1200000, keterangan: "Donasi Buku" },
+        { tanggal: "2025-02-01", jenis: "Masuk", pihak: "Sponsor X", nominal: 4000000, keterangan: "Sponsor Event" },
+        { tanggal: "2025-03-10", jenis: "Masuk", pihak: "PT ABC", nominal: 5000000, keterangan: "CSR Program" },
+        { tanggal: "2025-04-20", jenis: "Masuk", pihak: "Universitas Muhammadiyah Yogyakarta", nominal: 9500000, keterangan: "Pendanaan Alat" },
+        { tanggal: "2025-05-25", jenis: "Masuk", pihak: "Alumni FT", nominal: 7500000, keterangan: "Bantuan Alumni" },
+        { tanggal: "2025-06-03", jenis: "Masuk", pihak: "Dikti", nominal: 10000000, keterangan: "Hibah Penelitian" },
+        { tanggal: "2025-07-12", jenis: "Masuk", pihak: "Yayasan ABC", nominal: 3000000, keterangan: "Bantuan Sosial" },
+        { tanggal: "2025-08-18", jenis: "Masuk", pihak: "Sponsor Y", nominal: 2000000, keterangan: "Pendanaan Lomba" },
+        { tanggal: "2025-09-05", jenis: "Masuk", pihak: "Kementerian", nominal: 8000000, keterangan: "Pendanaan Digitalisasi" },
+        { tanggal: "2025-10-11", jenis: "Masuk", pihak: "PT XYZ", nominal: 6000000, keterangan: "Pelatihan SDM" },
     ];
 
     const transaksiKeluar = [
-        {
-            tanggal: "12 Juni 2025",
-            jenis: "Keluar",
-            pihak: "Fakultas Teknik",
-            nominal: 4000000,
-            keterangan: "Pendanaan Penelitian",
-        },
-        {
-            tanggal: "12 Juni 2025",
-            jenis: "Keluar",
-            pihak: "Pengadaan Suku Cadang",
-            nominal: 3500000,
-            keterangan: "Alat Praktikum",
-        },
+        { tanggal: "2025-01-20", jenis: "Keluar", pihak: "Pembelian Buku", nominal: 1000000, keterangan: "Kebutuhan Perpustakaan" },
+        { tanggal: "2025-02-14", jenis: "Keluar", pihak: "Biaya Event", nominal: 2500000, keterangan: "Dekorasi & Konsumsi" },
+        { tanggal: "2025-03-11", jenis: "Keluar", pihak: "Kementrian Pendidikan", nominal: 25000000, keterangan: "Pengembangan Lab" },
+        { tanggal: "2025-04-28", jenis: "Keluar", pihak: "Vendor Mesin", nominal: 15000000, keterangan: "Pembelian CNC" },
+        { tanggal: "2025-05-30", jenis: "Keluar", pihak: "Workshop", nominal: 5000000, keterangan: "Pelatihan Mahasiswa" },
+        { tanggal: "2025-06-12", jenis: "Keluar", pihak: "Fakultas Teknik", nominal: 4000000, keterangan: "Pendanaan Penelitian" },
+        { tanggal: "2025-06-12", jenis: "Keluar", pihak: "Pengadaan Suku Cadang", nominal: 3500000, keterangan: "Alat Praktikum" },
+        { tanggal: "2025-07-01", jenis: "Keluar", pihak: "PT Pembersih", nominal: 3000000, keterangan: "Cleaning Service" },
+        { tanggal: "2025-08-22", jenis: "Keluar", pihak: "Internet & IT", nominal: 7000000, keterangan: "Upgrade Infrastruktur" },
+        { tanggal: "2025-09-13", jenis: "Keluar", pihak: "Pelatihan", nominal: 3500000, keterangan: "Workshop SDM" },
     ];
 
     const semuaTransaksi = [...transaksiMasuk, ...transaksiKeluar]
@@ -72,7 +63,7 @@ export default function TransaksiSemuaPage() {
         const itemMonth = new Date(item.tanggal).getMonth() + 1;
         const itemBulanStr = String(itemMonth).padStart(2, "0");
 
-        const cocokBulan = itemBulanStr === selectedBulan;
+        const cocokBulan = selectedBulan === "Semua" || itemBulanStr === selectedBulan;
 
         return cocokSearch && cocokBulan;
     });
@@ -86,7 +77,6 @@ export default function TransaksiSemuaPage() {
         .reduce((sum, item) => sum + item.nominal, 0);
 
     const totalSaldo = totalMasuk - totalKeluar;
-
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -125,7 +115,6 @@ export default function TransaksiSemuaPage() {
                         </Select>
                     </div>
 
-
                     <Input
                         type="text"
                         placeholder="Cari transaksi..."
@@ -153,18 +142,12 @@ export default function TransaksiSemuaPage() {
                                 </tr>
                             </thead>
                             <tbody>
-
                                 {filteredData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.tanggal}</td>
                                         <td className="p-4">
-                                            <span
-                                                className={`px-3 py-1 text-xs font-medium rounded-full ${item.jenis === "Masuk"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : "bg-red-100 text-red-700"
-                                                    }`}
-                                            >
+                                            <span className={`px-3 py-1 text-xs font-medium rounded-full ${item.jenis === "Masuk" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                                                 {item.jenis}
                                             </span>
                                         </td>
@@ -180,15 +163,12 @@ export default function TransaksiSemuaPage() {
                                         Total Bulan Ini
                                     </td>
                                     <td className="p-4">
-
                                         <div className={`font-bold ${totalSaldo >= 0 ? "text-green-700" : "text-red-700"}`}>
                                             = Rp {totalSaldo.toLocaleString()}
                                         </div>
                                     </td>
                                 </tr>
                             </tfoot>
-
-
                         </table>
                     </CardContent>
                 </Card>

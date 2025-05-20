@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DollarSign, Pencil, Trash2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -8,79 +8,86 @@ import { Input } from "@/components/ui/input";
 import {
     Card,
     CardContent,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card";
-
 import {
     Select,
-    SelectContent,
-    SelectItem,
     SelectTrigger,
     SelectValue,
+    SelectContent,
+    SelectItem,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { jsPDF } from "jspdf";
 
+interface Transaksi {
+    no: number;
+    tanggal: string;
+    sumber: string;
+    nominal: number;
+    keterangan: string;
+}
+
 export default function KeuanganMasukPage() {
     const router = useRouter();
-    const [selectedMonth, setSelectedMonth] = useState("April");
+    const [selectedMonth, setSelectedMonth] = useState("Semua");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
-    const data = [
-        {
-            no: 1,
-            tanggal: "20 April 2025",
-            sumber: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 9500000,
-            keterangan: "Pendanaan Alat",
-        },
-        {
-            no: 2,
-            tanggal: "11 Maret 2025",
-            sumber: "Kementrian Pendidikan",
-            nominal: 25000000,
-            keterangan: "Pengembangan Lab",
-        },
-        {
-            no: 3,
-            tanggal: "12 Juni 2025",
-            sumber: "Fakultas Teknik",
-            nominal: 1800000,
-            keterangan: "Pendanaan Kompetisi Inovasi",
-        },
-        {
-            no: 4,
-            tanggal: "12 Juni 2025",
-            sumber: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 5800000,
-            keterangan: "Bantuan Pemeliharaan Alat",
-        },
-        {
-            no: 5,
-            tanggal: "12 Juni 2025",
-            sumber: "Universitas Muhammadiyah Yogyakarta",
-            nominal: 3500000,
-            keterangan: "Bantuan Peralatan Praktikum",
-        },
-        {
-            no: 6,
-            tanggal: "12 Juni 2025",
-            sumber: "Fakultas Teknik",
-            nominal: 4000000,
-            keterangan: "Pendanaan untuk Penelitian",
-        },
+    const data: Transaksi[] = [
+        { no: 1, tanggal: "2025-04-20", sumber: "UMY", nominal: 9500000, keterangan: "Pendanaan Alat" },
+        { no: 2, tanggal: "2025-03-11", sumber: "Kemendikbud", nominal: 25000000, keterangan: "Pengembangan Lab" },
+        { no: 3, tanggal: "2025-06-12", sumber: "FT", nominal: 1800000, keterangan: "Kompetisi Inovasi" },
+        { no: 4, tanggal: "2025-06-13", sumber: "UMY", nominal: 5800000, keterangan: "Pemeliharaan Alat" },
+        { no: 5, tanggal: "2025-06-14", sumber: "UMY", nominal: 3500000, keterangan: "Praktikum" },
+        { no: 6, tanggal: "2025-06-15", sumber: "FT", nominal: 4000000, keterangan: "Penelitian" },
+        { no: 7, tanggal: "2025-05-22", sumber: "Sponsor A", nominal: 8000000, keterangan: "Donasi Workshop" },
+        { no: 8, tanggal: "2025-05-30", sumber: "Alumni FT", nominal: 7000000, keterangan: "Bantuan Alumni" },
+        { no: 9, tanggal: "2025-07-01", sumber: "Dikti", nominal: 12000000, keterangan: "Dana Hibah" },
+        { no: 10, tanggal: "2025-07-03", sumber: "PT Mitra", nominal: 9500000, keterangan: "CSR Industri" },
     ];
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const monthNameToNumber: Record<string, number> = {
+        Januari: 1, Februari: 2, Maret: 3, April: 4, Mei: 5,
+        Juni: 6, Juli: 7, Agustus: 8, September: 9, Oktober: 10,
+        November: 11, Desember: 12,
+    };
 
-    const previewReceiptPDF = (transaction: any) => {
+    const filterByMonth = (data: Transaksi[]) => {
+        if (selectedMonth === "Semua") return data;
+        const monthNumber = monthNameToNumber[selectedMonth];
+        return data.filter((item) => {
+            const date = new Date(item.tanggal);
+            return date.getMonth() + 1 === monthNumber;
+        });
+    };
+
+    const filteredData = filterByMonth(data).filter(
+        (item) =>
+            item.sumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.keterangan.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedMonth]);
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    };
+
+    // Tetap: preview PDF kwitansi
+    const previewReceiptPDF = (transaction: Transaksi) => {
         const doc = new jsPDF();
-
-        // Margin & posisi awal
         const marginX = 20;
         let currentY = 20;
 
-        // Header
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
         doc.text("UNIVERSITAS MUHAMMADIYAH YOGYAKARTA", 105, currentY, { align: "center" });
@@ -90,27 +97,20 @@ export default function KeuanganMasukPage() {
         doc.text("Jl. Brawijaya, Kasihan, Bantul, Yogyakarta", 105, currentY, { align: "center" });
 
         currentY += 10;
-
-        // Garis pemisah header
         doc.setLineWidth(0.5);
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        // Judul Kwitansi
         doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
         doc.text("KWITANSI PENERIMAAN DANA", 105, currentY, { align: "center" });
         currentY += 10;
-
-        // Garis bawah judul
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        // Reset font
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
 
-        // Data transaksi
         const data = [
             ["Tanggal", transaction.tanggal],
             ["Sumber Dana", transaction.sumber],
@@ -132,7 +132,6 @@ export default function KeuanganMasukPage() {
         doc.line(marginX, currentY, 210 - marginX, currentY);
         currentY += 10;
 
-        // Footer: Tanggal Cetak & Tanda Tangan
         const printedDate = new Date().toLocaleDateString();
         doc.text(`Yogyakarta, ${printedDate}`, 140, currentY);
         currentY += 25;
@@ -141,7 +140,6 @@ export default function KeuanganMasukPage() {
         currentY += 7;
         doc.text("Tanda Tangan", 155, currentY);
 
-        // Preview PDF
         const blob = doc.output("blob");
         const url = URL.createObjectURL(blob);
         window.open(url, "_blank");
@@ -149,7 +147,6 @@ export default function KeuanganMasukPage() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-            {/* Header */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
                 <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
                     <DollarSign className="w-5 h-5" />
@@ -157,49 +154,38 @@ export default function KeuanganMasukPage() {
                 </div>
             </div>
 
-            {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10">
-
+                {/* Filter */}
                 <div className="flex flex-col gap-4 mb-4">
-                    {/* Baris Atas: Filter & Button */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-sm text-white">
-                            <Label htmlFor="bulan" className="text-white">
-                                Bulan:
-                            </Label>
+                            <Label htmlFor="bulan" className="text-white">Bulan:</Label>
                             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                                <SelectTrigger className="w-[140px] bg-white text-black">
+                                <SelectTrigger className="w-[160px] bg-white text-black">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="April">April</SelectItem>
-                                    <SelectItem value="Mei">Mei</SelectItem>
-                                    <SelectItem value="Juni">Juni</SelectItem>
-                                    <SelectItem value="Juli">Juli</SelectItem>
-                                    <SelectItem value="Agustus">Agustus</SelectItem>
+                                    <SelectItem value="Semua">Semua</SelectItem>
+                                    {Object.keys(monthNameToNumber).map((bulan) => (
+                                        <SelectItem key={bulan} value={bulan}>{bulan}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
-
-                        <Button
-                            onClick={() => router.push("/keuangan/masuk/add")}
-                            className="bg-blue-600 text-white"
-                        >
+                        <Button onClick={() => router.push("/keuangan/masuk/add")} className="bg-blue-600 text-white">
                             + Tambah Transaksi
                         </Button>
                     </div>
 
-                    {/* Baris Bawah: Search */}
                     <Input
                         type="text"
                         placeholder="Cari transaksi..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-10 px-4 text-sm text-gray-700 placeholder:text-gray-400 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-700 focus:border-transparent shadow-sm"
+                        className="w-full h-10 px-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-md"
                     />
                 </div>
 
-                {/* Tabel */}
                 <Card>
                     <CardContent className="overflow-auto px-0">
                         <table className="w-full text-sm text-left">
@@ -215,7 +201,7 @@ export default function KeuanganMasukPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((item) => (
+                                {paginatedData.map((item) => (
                                     <tr key={item.no} className="border-b hover:bg-gray-50">
                                         <td className="p-4">{item.no}</td>
                                         <td className="p-4">{item.tanggal}</td>
@@ -226,25 +212,17 @@ export default function KeuanganMasukPage() {
                                             <Button
                                                 variant="outline"
                                                 size="icon"
-                                                className="bg-gray-100 hover:bg-gray-200"
                                                 onClick={() => previewReceiptPDF(item)}
+                                                className="bg-gray-100 hover:bg-gray-200"
                                             >
                                                 <Upload size={16} />
                                             </Button>
                                         </td>
                                         <td className="p-4 flex items-center gap-2">
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600"
-                                            >
+                                            <Button size="icon" variant="ghost" className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600">
                                                 <Pencil size={16} />
                                             </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="bg-red-100 hover:bg-red-200 text-red-600"
-                                            >
+                                            <Button size="icon" variant="ghost" className="bg-red-100 hover:bg-red-200 text-red-600">
                                                 <Trash2 size={16} />
                                             </Button>
                                         </td>
@@ -252,23 +230,28 @@ export default function KeuanganMasukPage() {
                                 ))}
                             </tbody>
                         </table>
-                    </CardContent>
 
-                    {/* Pagination */}
-                    <div className="flex justify-center items-center gap-2 py-4">
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
-                            &lt;
-                        </Button>
-                        <Button size="sm" className="bg-red-700 text-white rounded-full h-7 w-7 text-xs font-medium">
-                            01
-                        </Button>
-                        <Button variant="link" size="sm">02</Button>
-                        <Button variant="link" size="sm">03</Button>
-                        <span className="text-sm text-gray-500">...</span>
-                        <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-700">
-                            &gt;
-                        </Button>
-                    </div>
+                        {/* Pagination */}
+                        <div className="flex justify-center items-center gap-2 py-4">
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                                &lt;
+                            </Button>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <Button
+                                    key={i}
+                                    size="sm"
+                                    variant={currentPage === i + 1 ? "default" : "link"}
+                                    className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
+                                    onClick={() => handlePageChange(i + 1)}
+                                >
+                                    {String(i + 1).padStart(2, "0")}
+                                </Button>
+                            ))}
+                            <Button variant="ghost" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                                &gt;
+                            </Button>
+                        </div>
+                    </CardContent>
                 </Card>
             </div>
         </div>
