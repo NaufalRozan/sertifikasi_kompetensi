@@ -11,6 +11,7 @@ import {
     CardTitle,
     CardContent,
 } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 
 export default function ManajemenHRDPage() {
     const router = useRouter();
@@ -57,6 +58,18 @@ export default function ManajemenHRDPage() {
 
             {/* Konten */}
             <div className="w-full max-w-7xl -mt-52 z-10 relative px-4 pb-10 space-y-6">
+                <div className="flex flex-col gap-4 mb-4">
+                    <div className="flex justify-between items-center flex-wrap gap-4">
+                        <div className="flex items-center gap-2 text-sm text-white">
+                        </div>
+                        <Button
+                            onClick={() => router.push("/hrd/add")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
+                        >
+                            + Tambah Pengurus
+                        </Button>
+                    </div>
+                </div>
                 {/* Statistik */}
                 <Card className="shadow-md">
                     <CardContent className="py-6 flex justify-between items-center gap-6 flex-wrap">

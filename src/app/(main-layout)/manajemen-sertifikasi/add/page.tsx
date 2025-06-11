@@ -3,34 +3,56 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PlusCircle } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { BASE_URL } from "@/constant/BaseURL";
 
 export default function AddSertifikasiPage() {
     const router = useRouter();
     const [kode, setKode] = useState("");
     const [nama, setNama] = useState("");
-    const [tersertifikasi, setTersertifikasi] = useState(0);
-    const [terdaftar, setTerdaftar] = useState(0);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const data = { kode, nama, tersertifikasi, terdaftar };
-        console.log("Data Sertifikasi Baru:", data);
-        alert("Data sertifikasi berhasil ditambahkan!");
-        // TODO: Kirim ke API atau redirect
-        router.push("/manajemen-sertifikasi");
+        const payload = {
+            code: kode,
+            name: nama,
+        };
+
+        try {
+            toast.promise(
+                axios.post(`${BASE_URL}/sertifikasi`, payload, {
+                    withCredentials: true, // sesuai kebutuhan CORS/auth
+                }),
+                {
+                    loading: "Menyimpan sertifikasi...",
+                    success: () => {
+                        // setelah sukses, redirect
+                        router.push("/manajemen-sertifikasi");
+                        return "Berhasil menambahkan sertifikasi!";
+                    },
+                    error: (err) => {
+                        const msg = err?.response?.data?.message || err.message;
+                        return `Gagal menambahkan: ${msg}`;
+                    },
+                }
+            );
+        } catch (error) {
+            console.error("[AddSertifikasi]", error);
+        }
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             {/* Header Merah */}
             <div className="w-full bg-red-700 h-[300px] px-6 flex justify-center items-start pt-6">
-                <div className="w-full max-w-7xl text-white flex justify-start items-center gap-2 text-xl font-semibold">
+                <div className="w-full max-w-7xl text-white flex items-center gap-2 text-xl font-semibold">
                     <PlusCircle className="w-5 h-5" />
                     Tambah Sertifikasi
                 </div>
@@ -63,26 +85,6 @@ export default function AddSertifikasiPage() {
                                     value={nama}
                                     onChange={(e) => setNama(e.target.value)}
                                     required
-                                />
-                            </div>
-
-                            {/* Tersertifikasi */}
-                            <div className="space-y-1">
-                                <Label>Jumlah Peserta Tersertifikasi</Label>
-                                <Input
-                                    type="number"
-                                    value={tersertifikasi}
-                                    onChange={(e) => setTersertifikasi(parseInt(e.target.value) || 0)}
-                                />
-                            </div>
-
-                            {/* Terdaftar */}
-                            <div className="space-y-1">
-                                <Label>Jumlah Peserta Terdaftar</Label>
-                                <Input
-                                    type="number"
-                                    value={terdaftar}
-                                    onChange={(e) => setTerdaftar(parseInt(e.target.value) || 0)}
                                 />
                             </div>
 
