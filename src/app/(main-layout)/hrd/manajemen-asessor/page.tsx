@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BadgeCheck } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,144 +15,53 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
+import { BASE_URL } from "@/constant/BaseURL";
+
+interface RawEmployee {
+    id: string;
+    role: string;
+    sertifikasiId: string;
+    name: string;
+    NIP: string;
+    email: string;
+    phone: string;
+    NPWP?: string;
+    namaBank?: string;
+    noRek?: string;
+    status: string;
+    notifikasi: string;
+}
+
+interface RawSertifikasi {
+    id: string;
+    name: string;
+    code: string;
+    Employee: any[];
+}
+
+interface Assessor {
+    id: string;
+    nip: string;
+    nama: string;
+    email: string;
+    whatsapp: string;
+    sertifikasi: string;
+    status: string;
+    notifikasi: string;
+    npwp: string;
+    namaBank: string;
+    rekening: string;
+}
 
 export default function ManajemenAsessorPage() {
+    const [data, setData] = useState<Assessor[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
     const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-
-    const data = [
-        {
-            nip: "AS001",
-            nama: "Rama Dwipa",
-            email: "rama.asessor@gmail.com",
-            whatsapp: "081234567880",
-            sertifikasi: "K3 Umum",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "33.444.555.6-789.000",
-            namaBank: "Bank Mandiri",
-            rekening: "5544332211",
-        },
-        {
-            nip: "AS002",
-            nama: "Lia Santika",
-            email: "lia.santika@gmail.com",
-            whatsapp: "081234567881",
-            sertifikasi: "K3 Engineering",
-            status: "Nonaktif",
-            notifikasi: "Belum",
-            npwp: "88.999.111.2-345.000",
-            namaBank: "Bank BCA",
-            rekening: "6677889900",
-        },
-        {
-            nip: "AS003",
-            nama: "Johan Siregar",
-            email: "johan.siregar@gmail.com",
-            whatsapp: "081234567882",
-            sertifikasi: "Welding Inspector (CWI)",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "77.888.222.1-654.000",
-            namaBank: "Bank BCA",
-            rekening: "4433221100",
-        },
-        {
-            nip: "AS004",
-            nama: "Intan Permata",
-            email: "intan.permata@gmail.com",
-            whatsapp: "081234567883",
-            sertifikasi: "NDT Level II",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "99.111.222.3-123.000",
-            namaBank: "Bank BRI",
-            rekening: "3322110099",
-        },
-        {
-            nip: "AS005",
-            nama: "Agus Prabowo",
-            email: "agus.prabowo@gmail.com",
-            whatsapp: "081234567884",
-            sertifikasi: "K3 Mekanik",
-            status: "Nonaktif",
-            notifikasi: "Belum",
-            npwp: "11.222.333.4-456.000",
-            namaBank: "Bank Mandiri",
-            rekening: "2211009988",
-        },
-        {
-            nip: "AS006",
-            nama: "Dewi Kartika",
-            email: "dewi.kartika@gmail.com",
-            whatsapp: "081234567885",
-            sertifikasi: "K3 Umum",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "22.333.444.5-567.000",
-            namaBank: "Bank BCA",
-            rekening: "1100998877",
-        },
-        {
-            nip: "AS007",
-            nama: "Rudi Wijaya",
-            email: "rudi.wijaya@gmail.com",
-            whatsapp: "081234567886",
-            sertifikasi: "K3 Engineering",
-            status: "Nonaktif",
-            notifikasi: "Belum",
-            npwp: "55.666.777.8-901.000",
-            namaBank: "Bank BNI",
-            rekening: "0099887766",
-        },
-        {
-            nip: "AS008",
-            nama: "Mega Sari",
-            email: "mega.sari@gmail.com",
-            whatsapp: "081234567887",
-            sertifikasi: "K3 Mekanik",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "66.777.888.9-012.000",
-            namaBank: "Bank BRI",
-            rekening: "9988776655",
-        },
-        {
-            nip: "AS009",
-            nama: "Taufik Hidayat",
-            email: "taufik.h@gmail.com",
-            whatsapp: "081234567888",
-            sertifikasi: "Welding Inspector (CWI)",
-            status: "Aktif",
-            notifikasi: "Terkirim",
-            npwp: "77.888.999.0-123.000",
-            namaBank: "Bank CIMB",
-            rekening: "8877665544",
-        },
-        {
-            nip: "AS010",
-            nama: "Sinta Lestari",
-            email: "sinta.lestari@gmail.com",
-            whatsapp: "081234567889",
-            sertifikasi: "NDT Level II",
-            status: "Nonaktif",
-            notifikasi: "Belum",
-            npwp: "88.999.000.1-234.000",
-            namaBank: "Bank Mandiri",
-            rekening: "7766554433",
-        },
-    ];
-
-    const sertifikasiOptions = [
-        "Semua",
-        "K3 Umum",
-        "K3 Mekanik",
-        "K3 Engineering",
-        "NDT Level II",
-        "Welding Inspector (CWI)",
-    ];
 
     const getBadgeStyle = (value: string) => {
         switch (value) {
@@ -163,6 +75,60 @@ export default function ManajemenAsessorPage() {
                 return "bg-gray-100 text-gray-500";
         }
     };
+
+    useEffect(() => {
+        const fetchAll = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const [sertRes, empRes] = await Promise.all([
+                    axios.get<{ data: RawSertifikasi[] }>(
+                        `${BASE_URL}/sertifikasi/`,
+                        { withCredentials: true }
+                    ),
+                    axios.get<{ data: RawEmployee[] }>(
+                        `${BASE_URL}/employees/`,
+                        { withCredentials: true }
+                    ),
+                ]);
+
+                const sertList = sertRes.data.data;
+                const assessors = empRes.data.data.filter((e) => e.role === "Assessor");
+
+                const mapped: Assessor[] = assessors.map((e) => ({
+                    id: e.id,
+                    nip: e.NIP,
+                    nama: e.name,
+                    email: e.email,
+                    whatsapp: e.phone,
+                    sertifikasi:
+                        sertList.find((s) => s.id === e.sertifikasiId)?.name ?? "-",
+                    status: e.status,
+                    notifikasi: e.notifikasi,
+                    npwp: e.NPWP ?? "",
+                    namaBank: e.namaBank ?? "",
+                    rekening: e.noRek ?? "",
+                }));
+
+                setData(mapped);
+            } catch (err) {
+                console.error(err);
+                setError("Gagal memuat data asessor.");
+                toast.error("Gagal memuat data asessor.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAll();
+    }, []);
+
+    const sertifikasiOptions = [
+        "Semua",
+        ...Array.from(new Set(data.map((d) => d.sertifikasi))).filter(
+            (v) => v && v !== "-"
+        ),
+    ];
 
     const filteredData =
         selectedSertifikasi === "Semua"
@@ -182,7 +148,9 @@ export default function ManajemenAsessorPage() {
     );
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) setCurrentPage(page);
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
     };
 
     return (
@@ -243,83 +211,101 @@ export default function ManajemenAsessorPage() {
 
                 {/* Tabel */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-red-700 font-semibold border-b">
-                            <tr>
-                                <th className="p-4">NIP</th>
-                                <th className="p-4">Nama</th>
-                                <th className="p-4">Email</th>
-                                <th className="p-4">Whatsapp</th>
-                                <th className="p-4">Sertifikasi</th>
-                                <th className="p-4">NPWP</th>
-                                <th className="p-4">Nama Bank</th>
-                                <th className="p-4">No. Rekening</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4">Notifikasi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paginatedData.map((item, idx) => (
-                                <tr key={idx} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{item.nip}</td>
-                                    <td className="p-4">{item.nama}</td>
-                                    <td className="p-4">{item.email}</td>
-                                    <td className="p-4">{item.whatsapp}</td>
-                                    <td className="p-4">{item.sertifikasi}</td>
-                                    <td className="p-4">{item.npwp}</td>
-                                    <td className="p-4">{item.namaBank}</td>
-                                    <td className="p-4">{item.rekening}</td>
-                                    <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                                                item.status
-                                            )}`}
-                                        >
-                                            {item.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4">
-                                        <span
-                                            className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
-                                                item.notifikasi
-                                            )}`}
-                                        >
-                                            {item.notifikasi}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {loading ? (
+                        <div className="p-4 text-center text-gray-500">
+                            Memuat data asessor...
+                        </div>
+                    ) : error ? (
+                        <div className="p-4 text-center text-red-500">{error}</div>
+                    ) : data.length === 0 ? (
+                        <div className="p-10 text-center text-gray-500 italic">
+                            Belum ada asessor yang ditambahkan.
+                        </div>
+                    ) : (
+                        <>
+                            <table className="w-full text-sm text-left">
+                                <thead className="text-red-700 font-semibold border-b">
+                                    <tr>
+                                        <th className="p-4">NIP</th>
+                                        <th className="p-4">Nama</th>
+                                        <th className="p-4">Email</th>
+                                        <th className="p-4">Whatsapp</th>
+                                        <th className="p-4">Sertifikasi</th>
+                                        <th className="p-4">NPWP</th>
+                                        <th className="p-4">Nama Bank</th>
+                                        <th className="p-4">No. Rekening</th>
+                                        <th className="p-4">Status</th>
+                                        <th className="p-4">Notifikasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {paginatedData.map((item) => (
+                                        <tr key={item.id} className="border-b hover:bg-gray-50">
+                                            <td className="p-4">{item.nip}</td>
+                                            <td className="p-4">{item.nama}</td>
+                                            <td className="p-4">{item.email}</td>
+                                            <td className="p-4">{item.whatsapp}</td>
+                                            <td className="p-4">{item.sertifikasi}</td>
+                                            <td className="p-4">{item.npwp}</td>
+                                            <td className="p-4">{item.namaBank}</td>
+                                            <td className="p-4">{item.rekening}</td>
+                                            <td className="p-4">
+                                                <span
+                                                    className={`whitespace-nowrap px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
+                                                        item.status
+                                                    )}`}
+                                                >
+                                                    {item.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-4">
+                                                <span
+                                                    className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(
+                                                        item.notifikasi
+                                                    )}`}
+                                                >
+                                                    {item.notifikasi}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
 
-                    {/* Pagination */}
-                    <div className="flex justify-center items-center gap-2 py-4">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                            &lt;
-                        </Button>
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <Button
-                                key={i}
-                                size="sm"
-                                variant={currentPage === i + 1 ? "default" : "link"}
-                                className={currentPage === i + 1 ? "bg-red-700 text-white text-xs" : ""}
-                                onClick={() => handlePageChange(i + 1)}
-                            >
-                                {String(i + 1).padStart(2, "0")}
-                            </Button>
-                        ))}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                            &gt;
-                        </Button>
-                    </div>
+                            {/* Pagination */}
+                            <div className="flex justify-center items-center gap-2 py-4">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                >
+                                    &lt;
+                                </Button>
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <Button
+                                        key={i}
+                                        size="sm"
+                                        variant={currentPage === i + 1 ? "default" : "link"}
+                                        className={
+                                            currentPage === i + 1
+                                                ? "bg-red-700 text-white text-xs"
+                                                : ""
+                                        }
+                                        onClick={() => handlePageChange(i + 1)}
+                                    >
+                                        {String(i + 1).padStart(2, "0")}
+                                    </Button>
+                                ))}
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                >
+                                    &gt;
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
