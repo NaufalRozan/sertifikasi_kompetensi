@@ -10,70 +10,24 @@ export default function PanitiaEventPage() {
     const { id: programId, eventId } = useParams();
     const router = useRouter();
 
-    const [panitiaData, setPanitiaData] = useState<any[]>([]);
+    const [panitiaData, setPanitiaData] = useState<any>(null); // satu entri panitia per event
     const [eventData, setEventData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Dummy panitia data
-        const dummyPanitia = [
-            {
-                nip: "PIC001",
-                nama: "Dewi Lestari",
-                email: "dewi.lestari@eventorganizer.com",
-                whatsapp: "081234567800",
-                jabatan: "PIC",
-                unit: "Manajemen Acara",
-                sertifikasi: "Manajemen Event",
-                status: "Aktif",
-                notifikasi: "Terkirim",
-                npwp: "12.345.678.9-111.000",
-                namaBank: "Bank Mandiri",
-                rekening: "1122334455",
-            },
-            {
-                nip: "ST001",
-                nama: "Fajar Nugraha",
-                email: "fajar.nugraha@eventorganizer.com",
-                whatsapp: "081234567801",
-                jabatan: "Staf Logistik",
-                unit: "Perlengkapan",
-                sertifikasi: "K3 Umum",
-                status: "Aktif",
-                notifikasi: "Terkirim",
-                npwp: "33.444.555.6-777.000",
-                namaBank: "Bank BRI",
-                rekening: "6677889900",
-            },
-            {
-                nip: "ST002",
-                nama: "Rina Oktaviani",
-                email: "rina.oktaviani@eventorganizer.com",
-                whatsapp: "081234567802",
-                jabatan: "Staf Registrasi",
-                unit: "Pendaftaran",
-                sertifikasi: "Administrasi Acara",
-                status: "Nonaktif",
-                notifikasi: "Belum",
-                npwp: "22.333.444.5-888.000",
-                namaBank: "Bank BCA",
-                rekening: "5544332211",
-            },
-            {
-                nip: "ST003",
-                nama: "Bayu Pratama",
-                email: "bayu.pratama@eventorganizer.com",
-                whatsapp: "081234567803",
-                jabatan: "Staf Keamanan",
-                unit: "Keamanan",
-                sertifikasi: "K3 Mekanik",
-                status: "Aktif",
-                notifikasi: "Terkirim",
-                npwp: "66.777.888.1-999.000",
-                namaBank: "Bank BNI",
-                rekening: "9988776655",
+        const fetchPanitia = async () => {
+            try {
+                const res = await fetch(`${BASE_URL}/panitia/`, {
+                    credentials: "include",
+                });
+                const json = await res.json();
+
+                const matched = json.data.find((item: any) => item.eventId === eventId);
+                setPanitiaData(matched || null);
+            } catch (err) {
+                console.error("Gagal memuat data panitia:", err);
             }
-        ];
+        };
 
         const fetchEvent = async () => {
             try {
@@ -87,9 +41,8 @@ export default function PanitiaEventPage() {
             }
         };
 
-        setPanitiaData(dummyPanitia);
-        fetchEvent();
-        setLoading(false);
+        setLoading(true);
+        Promise.all([fetchEvent(), fetchPanitia()]).finally(() => setLoading(false));
     }, [eventId]);
 
     const getBadgeStyle = (value: string) => {
@@ -98,15 +51,15 @@ export default function PanitiaEventPage() {
             case "Terkirim":
                 return "bg-green-100 text-green-700";
             case "Belum":
-            case "Nonaktif":
+            case "Tidak Aktif":
                 return "bg-red-100 text-red-700";
             default:
                 return "bg-gray-100 text-gray-500";
         }
     };
 
-    const pic = panitiaData.find((item) => item.jabatan === "PIC");
-    const staff = panitiaData.filter((item) => item.jabatan !== "PIC");
+    const pic = panitiaData?.PIC ?? null;
+    const staff = panitiaData?.staff ?? [];
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center">
@@ -132,18 +85,22 @@ export default function PanitiaEventPage() {
                     </div>
                 )}
 
-                {/* Tombol Tambah */}
+                {/* Tombol Tambah / Edit */}
                 <div className="flex justify-end">
                     <Button
-                        onClick={() =>
-                            router.push(`/program/${programId}/event/${eventId}/panitia/add`)
-                        }
+                        onClick={() => {
+                            const base = `/program/${programId}/event/${eventId}/panitia`;
+                            const route = panitiaData ? `${base}/${panitiaData.id}/edit` : `${base}/add`;
+                            router.push(route);
+                        }}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                         <UserPlus className="w-4 h-4 mr-2" />
-                        Tambah Panitia
+                        {panitiaData ? "Edit Panitia" : "Tambah Panitia"}
                     </Button>
                 </div>
+
+
 
                 {/* Tabel PIC */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
@@ -171,17 +128,17 @@ export default function PanitiaEventPage() {
                             </thead>
                             <tbody>
                                 <tr className="border-b hover:bg-gray-50">
-                                    <td className="p-4">{pic.nip}</td>
-                                    <td className="p-4">{pic.nama}</td>
+                                    <td className="p-4">{pic.NIP}</td>
+                                    <td className="p-4">{pic.name}</td>
                                     <td className="p-4">{pic.email}</td>
-                                    <td className="p-4">{pic.whatsapp}</td>
+                                    <td className="p-4">{pic.phone}</td>
                                     <td className="p-4">{pic.unit}</td>
-                                    <td className="p-4">{pic.sertifikasi}</td>
-                                    <td className="p-4">{pic.npwp}</td>
+                                    <td className="p-4">{pic.sertifikasiId}</td>
+                                    <td className="p-4">{pic.NPWP}</td>
                                     <td className="p-4">{pic.namaBank}</td>
-                                    <td className="p-4">{pic.rekening}</td>
+                                    <td className="p-4">{pic.noRek}</td>
                                     <td className="p-4">
-                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(pic.status)}`}>
+                                        <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(pic.status)}`}>
                                             {pic.status}
                                         </span>
                                     </td>
@@ -196,10 +153,12 @@ export default function PanitiaEventPage() {
                     )}
                 </div>
 
-                {/* Tabel Staf */}
+                {/* Tabel Staff */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
                     <div className="text-lg font-semibold text-gray-800 px-4 pt-4">Staf Panitia</div>
-                    {staff.length === 0 ? (
+                    {loading ? (
+                        <p className="text-center py-8 text-gray-500">Memuat data...</p>
+                    ) : staff.length === 0 ? (
                         <p className="text-center py-8 text-gray-500 italic">Belum ada staf panitia.</p>
                     ) : (
                         <table className="w-full text-sm text-left mt-2">
@@ -220,18 +179,18 @@ export default function PanitiaEventPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {staff.map((item, idx) => (
+                                {staff.map((item: any, idx: number) => (
                                     <tr key={idx} className="border-b hover:bg-gray-50">
-                                        <td className="p-4">{item.nip}</td>
-                                        <td className="p-4">{item.nama}</td>
+                                        <td className="p-4">{item.NIP}</td>
+                                        <td className="p-4">{item.name}</td>
                                         <td className="p-4">{item.email}</td>
-                                        <td className="p-4">{item.whatsapp}</td>
+                                        <td className="p-4">{item.phone}</td>
                                         <td className="p-4">{item.jabatan}</td>
                                         <td className="p-4">{item.unit}</td>
-                                        <td className="p-4">{item.sertifikasi}</td>
-                                        <td className="p-4">{item.npwp}</td>
+                                        <td className="p-4">{item.sertifikasiId}</td>
+                                        <td className="p-4">{item.NPWP}</td>
                                         <td className="p-4">{item.namaBank}</td>
-                                        <td className="p-4">{item.rekening}</td>
+                                        <td className="p-4">{item.noRek}</td>
                                         <td className="p-4">
                                             <span className={`px-3 py-1 text-xs font-medium rounded-full ${getBadgeStyle(item.status)}`}>
                                                 {item.status}
