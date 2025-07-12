@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner"; // kalau belum pakai sonner, boleh diganti alert biasa
-import { User } from "lucide-react";
+import { User, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -15,12 +15,19 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { BASE_URL } from "@/constant/BaseURL"; // pastikan ini ada di project kamu
+import { useRouter } from "next/navigation";
+import * as XLSX from "xlsx";
+import { useRef } from "react";
+
 
 export default function ManajemenPesertaPage() {
   const [selectedSertifikasi, setSelectedSertifikasi] = useState("Semua");
   const [data, setData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const sertifikasiOptions = [
     "Semua",
@@ -31,21 +38,22 @@ export default function ManajemenPesertaPage() {
     "Welding Inspector (CWI)",
   ];
 
-  useEffect(() => {
-    const fetchPeserta = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/peserta/`, {
-          withCredentials: true,
-        });
-        setData(res.data.data || []);
-      } catch (error) {
-        console.error(error);
-        toast.error("Gagal memuat data peserta.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPeserta = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/peserta/`, {
+        withCredentials: true,
+      });
+      setData(res.data.data || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal memuat data peserta.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPeserta();
   }, []);
 
@@ -81,6 +89,53 @@ export default function ManajemenPesertaPage() {
 
     return nama.includes(query) || email.includes(query);
   });
+
+  const handleDownloadTemplate = () => {
+    const a = document.createElement("a");
+    a.href = "/templates/sertifikasi_peserta.xlsx";
+    a.download = "sertifikasi_peserta.xlsx";
+    a.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+      const payload = json.map((row: any, idx: number) => {
+        if (!row.name || !row.email) {
+          throw new Error(`Baris ${idx + 2} – "name" dan "email" wajib diisi`);
+        }
+
+        return {
+          name: row.name,
+          email: row.email,
+          phone: row.phone,
+          nim: row.nim,
+        };
+      });
+
+      await axios.post(`${BASE_URL}/peserta/many`, payload, {
+        withCredentials: true,
+      });
+
+      toast.success(`${payload.length} peserta berhasil diimpor`);
+      await fetchPeserta(); // ⬅ Refresh data peserta langsung di UI
+    } catch (err: any) {
+      toast.error(err.message || "Gagal mengimpor file.");
+    } finally {
+      e.target.value = "";
+    }
+  };
+
+
+
 
 
   return (
@@ -120,9 +175,41 @@ export default function ManajemenPesertaPage() {
               </Select>
             </div>
 
-            <div className="text-sm font-semibold text-white">
-              Jumlah Peserta: <span className="font-bold">{searchedData.length}</span>
+
+
+            <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white">
+              <span>
+                Jumlah Peserta: <span className="font-bold">{searchedData.length}</span>
+              </span>
+
+              {/* Tombol Import dan Download */}
+              <div className="flex items-center space-x-2 mt-1 sm:mt-0">
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Import Peserta
+                </Button>
+
+                <Button
+                  onClick={handleDownloadTemplate}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  Download Template
+                </Button>
+              </div>
+
+              {/* Input file tersembunyi */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
+
           </div>
 
           {/* Baris Bawah: Search */}
