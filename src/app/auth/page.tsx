@@ -112,9 +112,9 @@ const AuthPage = () => {
             <div className="bg-white flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
 
                 <div className="md:w-full px-8 md:px-16">
-                    <h2 className="font-bold text-3xl text-[#AA2727]">Login</h2>
+                    <h2 className="font-bold text-3xl text-black">Login</h2>
 
-                    <p className="text-s mt-2 text-[#AA2727]">
+                    <p className="text-s mt-2 text-black/60">
                         SIM CV Metric
                     </p>
 

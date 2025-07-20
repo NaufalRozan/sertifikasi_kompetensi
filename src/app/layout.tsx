@@ -44,12 +44,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={GeistSans.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
           <StoreProvider>
             {children}
           </StoreProvider>
           <Toaster richColors closeButton />
-        </ThemeProvider>
       </body>
     </html>
   );
